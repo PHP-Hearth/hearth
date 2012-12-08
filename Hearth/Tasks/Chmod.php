@@ -5,9 +5,12 @@
  * Description of Chmod.php
  * 
  * @category Hearth
- * @package Targets
- * @package Expression package is undefined on line 8, column 15 in Templates/Scripting/PHPClass.php.
+ * @package Tasks
  * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
+ * @version 0.0.0
+ * @license http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
+ *          Attribution-NonCommercial-ShareAlike 3.0 Unported
+ *          Some Rights Reserved
  */
 
 namespace Hearth\Tasks;
@@ -18,10 +21,8 @@ namespace Hearth\Tasks;
  * Description of Chmod
  *
  * @category Hearth
- * @package Targets
- * @package Expression package is undefined on line 18, column 15 in Templates/Scripting/PHPClass.php.
+ * @package Tasks
  * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
- * @version $Id$
  */
 class Chmod
 {
@@ -29,6 +30,11 @@ class Chmod
      * @var string The file to run the chmod command on
      */
     protected $_file;
+
+    /**
+     * @var int The permissions to set to the file
+     */
+    protected $_permissions;
 
     /**
      * main
@@ -85,6 +91,48 @@ class Chmod
         }
 
         return $this->_file;
+    }
+
+    /**
+     * setPermissions
+     *
+     * Sets the permissions to be set to the file
+     *
+     * @access public
+     * @param int $permissions
+     * @return \Hearth\Tasks\Chmod
+     */
+    public function setPermissions($permissions)
+    {
+        if (!is_int($permissions)) {
+            throw new \InvalidArgumentException(
+                'Unexpected ' . gettype($permissions) . '. Expected an int'
+            );
+        }
+
+        $this->_permissions = $permissions;
+
+        return $this;
+    }
+
+    /**
+     * getPermissions
+     *
+     * Gets the permissions to be set to the file
+     *
+     * @access public
+     * @return int
+     * @throws Exception
+     */
+    public function getPermissions()
+    {
+        if (!isset($this->_permissions)) {
+            throw new Exception(
+                'No Permsissions were set to chmod'
+            );
+        }
+
+        return $this->_permissions;
     }
 
 }
