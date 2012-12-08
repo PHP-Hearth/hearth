@@ -15,4 +15,4 @@ require dirname(__FILE__) . HEARTH_DS . 'Hearth' . HEARTH_DS . 'Core.php';
 
 $core = new \Hearth\Core();
 
-$core->run();
+$core->main();
