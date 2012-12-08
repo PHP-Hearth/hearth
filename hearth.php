@@ -9,9 +9,9 @@
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
  */
 
-define('DS', '/');
+define('HEARTH_DS', '/');
 
-require dirname(__FILE__) . DS . 'Hearth' . DS . 'Core.php';
+require dirname(__FILE__) . HEARTH_DS . 'Hearth' . HEARTH_DS . 'Core.php';
 
 $core = new \Hearth\Core();
 
