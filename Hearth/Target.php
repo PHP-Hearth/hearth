@@ -1,9 +1,10 @@
 <?php
 /**
- * DemoTarget.php
+ * Target.php
+ *
+ * Description of Target.php
  * 
  * @category Hearth
- * @package Targets
  * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
  * @version 0.0.0
  * @license http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
@@ -11,33 +12,33 @@
  *          Some Rights Reserved
  */
 
-namespace Hearth\Target;
-
-use Hearth\Target;
+namespace Hearth;
 
 /**
- * DemoTarget
+ * Target
+ *
+ * Description of Target
  *
  * @category Hearth
- * @package Targets
  * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
  */
-class DemoTarget Extends Target
+abstract class Target
 {
 
+    public function main();
+
     /**
-     * main
+     * task
      *
-     * Main task target procedure
+     * Calls a task
      *
      * @access public
-     * @return void
+     * @param string $task
+     * @return \Hearth\Target
      */
-    public function main()
+    public function task($task)
     {
-        $this->task('chmod', 777);
 
-        return;
+        return $this;
     }
-    
 }
