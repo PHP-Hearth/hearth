@@ -12,7 +12,7 @@
  *          Some Rights Reserved
  */
 
-namespace Hearth;
+namespace Hearth\Core;
 
 /**
  * Task

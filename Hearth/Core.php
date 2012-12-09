@@ -13,6 +13,7 @@
 namespace Hearth;
 
 use Symfony\Component\Yaml\Yaml;
+use Hearth\Ansi\Format;
 
 /**
  * Core
@@ -134,7 +135,6 @@ class Core
         $element = (object) array(
             'namespace'  => (property_exists($configData, 'namespace')) ? $configData->namespace : null,
             'targetPath' => (property_exists($configData, 'targets')) ? $configData->targets : null,
-            'taskPath'   => (property_exists($configData, 'tasks')) ? $configData->tasks : null,
             'path'       => $path,
             'targets'    => array(),
             'children'   => array(),
@@ -147,16 +147,6 @@ class Core
 
             foreach ($targets as $target) {
                 $element->targets[] = substr(basename($target), 0, -4);
-            }
-        }
-
-        // Load all the Tasks Available
-        if (file_exists($path.$element->taskPath)) {
-            //get all image files with a .jpg extension.
-            $tasks = glob($path.$element->taskPath . "/*.php");
-
-            foreach ($tasks as $task) {
-                $element->tasks[] = substr(basename($task), 0, -4);
             }
         }
 
@@ -241,18 +231,26 @@ class Core
         echo $collapsed . "\r\n";
     }
 
-    protected function _collapseTargetIndex($data = null, $array = array())
+    protected function _collapseTargetIndex($data = null, $array = array(), $indent = '')
     {
         if (is_null($data)) {
             $data = $this->_targetIndex;
         }
 
-        $array[] = $data->namespace;
+        $formatNamespace = new Format();
+        $formatNamespace->setForeground('green')
+                        ->setAttribute('bold');
+
+        $formatTarget = new Format();
+        $formatTarget->setForeground('white');
+
         foreach ($data->targets as $target) {
-            $array[] = '- ' . $target;
+            $array[] = $formatTarget->getSequence() . $indent . $target . $formatTarget->clear();
         }
-        foreach ($data->children as $child) {
-            $this->_collapseTargetIndex($child, $array);
+
+        foreach ($data->children as $name => $child) {
+            $array[] = $formatNamespace->getSequence() . $indent . $name . $formatNamespace->clear();
+            $this->_collapseTargetIndex($child, $array, $indent . '  ');
         }
 
         return $array;
@@ -261,7 +259,7 @@ class Core
     protected function _callTarget($target)
     {
         // Resolve the CLI Target name to an actual Target class
-        $target = $this->_loadTarget($targetName);
+        $target = $this->_loadTarget($target);
 
         // Execute the Target
         $target->main();
@@ -270,6 +268,7 @@ class Core
     protected function _loadTarget($target)
     {
         $parts = explode('/', $target);
+
 
         $targetName = array_pop($parts);
 
@@ -291,7 +290,7 @@ class Core
 
         require_once $targetFile;
 
-        $target = '\\' . str_replace('/', '\\', $configSet->namespace) . '\\' . str_replace('/', '\\', $configSet->targetPath) . '\\' . $targetName;
+        $target = '\\' . str_replace('/', '\\', $configSet->namespace) . '\\' . $targetName;
 
         $target = new $target();
 
