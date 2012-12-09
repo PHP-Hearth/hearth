@@ -34,5 +34,14 @@ $outputProcessor = new \Hearth\Console\Output();
 $core = new \Hearth\Core();
 
 $core->setOutputProcessor($outputProcessor)
-     ->setArgs($argv)
-     ->main();
+     ->setArgs($argv);
+
+try {
+
+    $core->main();
+
+} catch(\Hearth\Exception\BuildException $e) {
+
+    $core->failBuild($e);
+    
+}

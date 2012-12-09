@@ -78,7 +78,7 @@ class Core
      * @access public
      * @return \Hearth\Console\Output
      */
-    public function output()
+    public function getOutputProcessor()
     {
         if (is_null($this->_outputProcessor)) {
             throw new \Hearth\Exception\NoOutputFormatterFound(
@@ -87,6 +87,11 @@ class Core
         }
 
         return $this->_outputProcessor;
+    }
+
+    public function output()
+    {
+        return $this->getOutputProcessor();
     }
 
     /**
@@ -300,5 +305,19 @@ class Core
         }
 
         return (is_null($index)) ? $this->_args : $this->_args[$index];
+    }
+    
+    public function failBuild($e)
+    {
+        $this->getOutputProcessor()
+             ->setForeground('black')
+             ->setBackground('red')
+             ->printLine(
+                 'Build Failed!'
+             )
+             ->printLine(
+                 $e->getMessage()
+                 . ' in ' . $e->getFile() . '#' . $e->getLine()
+             );
     }
 }
