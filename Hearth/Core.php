@@ -233,7 +233,7 @@ class Core
         $namespace = $lastChildYaml['namespace'];
 
 
-        echo "will look for target -- " . $targetName . " in ./" . dirname($lastChildYamlPath) . '/' . $lastChildYaml['targets'] . "/\n";
+        echo "will look for target -- " . $targetName . " in " . dirname($lastChildYamlPath) . '/' . $lastChildYaml['targets'] . "\n";
 
         return $this;
     }
