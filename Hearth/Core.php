@@ -24,6 +24,11 @@ use Symfony\Component\Yaml\Yaml;
 class Core
 {
     /**
+     * @var boolean Wheather or not the build is marked as failed
+     */
+    protected $_failed = false;
+
+    /**
      * @var array The arguments given for the build script
      */
     protected $_args = array();
@@ -322,8 +327,53 @@ class Core
 
         return (is_null($index)) ? $this->_args : $this->_args[$index];
     }
-    
-    public function failBuild($e)
+
+    /**
+     * getFailed
+     *
+     * Get the failed status of the application
+     *
+     * @access public
+     * @return boolean
+     */
+    public function getFailed()
+    {
+        return $this->_failed;
+    }
+
+    /**
+     * setFailed
+     *
+     * Set the failed status of the application
+     *
+     * @access public
+     * @param boolean $status
+     * @return \Hearth\Core
+     * @throws \InvalidArgumentException
+     */
+    public function setFailed($status)
+    {
+        if (!is_bool($status)) {
+            throw new \InvalidArgumentException(
+                'Unexpected ' . gettype($status) . '. Expected an array'
+            );
+        }
+
+        $this->_failed = $status;
+
+        return $this;
+    }
+
+    /**
+     * failBuild
+     *
+     * Fails the current build
+     *
+     * @access public
+     * @param \Hearth\Exception\BuildException $e
+     * @return \Hearth\Core
+     */
+    public function failBuild(\Hearth\Exception\BuildException $e)
     {
         $this->getOutputProcessor()
              ->setForeground('black')
@@ -335,5 +385,26 @@ class Core
                  $e->getMessage()
                  . ' in ' . $e->getFile() . '#' . $e->getLine()
              );
+
+        $this->setFailed(true);
+
+        return $this;
+    }
+
+    /**
+     * close
+     *
+     * Ends the application and EXITS the php script
+     *
+     * @access public
+     * @return void
+     */
+    public function close()
+    {
+        if ($this->getFailed()) {
+            exit(1);
+        }
+
+        exit(0);
     }
 }
