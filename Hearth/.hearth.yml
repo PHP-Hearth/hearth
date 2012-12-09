@@ -1,3 +1,4 @@
+namespace: HearthCore
 targets: Targets
 tasks: Tasks
 children:

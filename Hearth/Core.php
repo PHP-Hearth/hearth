@@ -68,20 +68,35 @@ class Core
      * @access protected
      * @return void
      */
-    protected function _buildTargetIndex($config)
+    protected function _buildTargetIndex($config, $path = '', $tree = array())
     {
-        $configData = $this->_loadConfigFile($config);
+        if ($path === '') {
+            $path = dirname(realpath($this->_cwd.'/'.$config)) . '/';
+        }
+        
+        $configData = $this->_loadConfigFile($path . basename($config));
 
-        $this->_targetIndex[] = array(
-            'tasks' => 
+        $element = (object) array(
+            'namespace'  => (property_exists($configData, 'namespace')) ? $configData->namespace : null,
+            'targetPath' => (property_exists($configData, 'targets')) ? $configData->targets : null,
+            'taskPath'   => (property_exists($configData, 'tasks')) ? $configData->tasks : null,
+            'path'       => $path,
+            'targets'    => array(),
+            'children'   => array(),
         );
+
+        // Load all the f
 
         // Load any child Hearth configs
         if (property_exists($configData, 'children')) {
             foreach ((array) $configData->children as $child) {
-                $this->_buildTargetIndex($child);
+                $element->children[] = $this->_buildTargetIndex($child, $element->path, $tree);
             }
         }
+
+        $tree[] = $element;
+
+        return $element;
     }
 
     /**
@@ -126,7 +141,9 @@ class Core
         }
 
         // Parse the base config file
-        $this->_buildTargetIndex($this->getConfigName());
+        $this->_targetIndex = $this->_buildTargetIndex($this->getConfigName());
+
+        print_r($this->_targetIndex);
 
         return;
     }
