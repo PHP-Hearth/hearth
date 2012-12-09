@@ -232,8 +232,11 @@ class Core
 
         $namespace = $lastChildYaml['namespace'];
 
+        $resolver = new Resolver();
+        $resolver->setInitialYml($initialYml)
+            ->lookup($targetArgs);
 
-        echo "will look for target -- " . $targetName . " in " . dirname($lastChildYamlPath) . '/' . $lastChildYaml['targets'] . "\n";
+        echo "will look for target -- " . $resolver->getTargetName() . " in " . $resolver->getTargetsPath() . "\n";
 
         return $this;
     }
