@@ -92,6 +92,9 @@ class Resolver
 
     public function index()
     {
+        $this->getOutputProcessor()->printLn("Available Targets");
+        $this->getOutputProcessor()->printLn("-----------------");
+        
         $index = $this->_indexConfig($this->getInitialYmlPath());
 
         $this->_displayIndex($index);
@@ -105,7 +108,9 @@ class Resolver
                 . $index['targets'] . $this->getDs() . '*.php'
             );
             foreach ($files as $file) {
-                echo $namespace . basename($file, '.php') . "\n";
+                $this->getOutputProcessor()->printLn(
+                    '    - ' . $namespace . basename($file, '.php')
+                );
             }
         }
 
@@ -239,5 +244,37 @@ class Resolver
         $className .= '\\' . $this->getTargetName();
 
         return $className;
+    }
+    
+    /**
+     * Set an output processor
+     * 
+     * @param \Output $outputProcessor
+     *
+     * @access public
+     * @return \Hearth\Core
+     */
+    public function setOutputProcessor(\Hearth\Console\Output\OutputInterface $outputProcessor)
+    {
+        $this->_outputProcessor = $outputProcessor;
+
+        return $this;
+    }
+    
+    /**
+     * Retrieve an output processor object
+     * 
+     * @access public
+     * @return \Hearth\Console\Output
+     */
+    public function getOutputProcessor()
+    {
+        if (!isset($this->_outputProcessor)) {
+            throw new \UnexpectedValueException(
+                'No output processor has been configured.'
+            );
+        }
+
+        return $this->_outputProcessor;
     }
 }

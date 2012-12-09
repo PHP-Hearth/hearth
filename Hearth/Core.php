@@ -56,28 +56,6 @@ class Core
     protected $_outputProcessor = null;
 
     /**
-     * Retrieve an output processor object
-     * 
-     * @access public
-     * @return \Hearth\Console\Output
-     */
-    public function getOutputProcessor()
-    {
-        if (is_null($this->_outputProcessor)) {
-            throw new \Hearth\Exception\NoOutputFormatterFound(
-                "No output processor has been configured."
-            );
-        }
-
-        return $this->_outputProcessor;
-    }
-
-    public function output()
-    {
-        return $this->getOutputProcessor();
-    }
-
-    /**
      * Set an output processor
      * 
      * @param \Output $outputProcessor
@@ -85,11 +63,28 @@ class Core
      * @access public
      * @return \Hearth\Core
      */
-    public function setOutputProcessor(Console\Output $outputProcessor)
+    public function setOutputProcessor(\Hearth\Console\Output\OutputInterface $outputProcessor)
     {
         $this->_outputProcessor = $outputProcessor;
 
         return $this;
+    }
+    
+    /**
+     * Retrieve an output processor object
+     * 
+     * @access public
+     * @return \Hearth\Console\Output
+     */
+    public function getOutputProcessor()
+    {
+        if (!isset($this->_outputProcessor)) {
+            throw new \UnexpectedValueException(
+                'No output processor has been configured.'
+            );
+        }
+
+        return $this->_outputProcessor;
     }
 
     /**
@@ -106,6 +101,7 @@ class Core
 
         $resolver = new Resolver();
         $resolver->setDs($this->getDs())
+                 ->setOutputProcessor($this->getOutputProcessor())
                  ->setInitialYmlPath($initialYml);
 
         switch ($argumentCount) {

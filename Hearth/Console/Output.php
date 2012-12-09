@@ -26,7 +26,7 @@ use \Hearth\Ansi\Format;
  * @package Console
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
  */
-class Output
+class Output implements \Hearth\Console\Output\OutputInterface
 {
     /**
      * @var \Hearth\Ansi\Format The format output sequence to use 
@@ -51,6 +51,14 @@ class Output
         
 		return $this;
 	}
+    
+    public function printLn($string) {
+		$format = $this->getFormat(null);
+        
+		echo $format->getSequence() . $string . "\n" . $format->clear();
+        
+		return $this;
+    }
 
     /**
      * dump
