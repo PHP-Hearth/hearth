@@ -125,4 +125,19 @@ class Output
 
         return $this;
     }
+
+    /**
+     * resetFormat
+     *
+     * Resets the default format to use on outputs
+     *
+     * @access public
+     * @return \Hearth\Console\Output
+     */
+    public function resetFormat()
+    {
+        unset($this->_format);
+
+        return $this;
+    }
 }
