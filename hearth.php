@@ -33,6 +33,6 @@ $outputProcessor = new \Hearth\Console\Output();
 
 $core = new \Hearth\Core();
 
-$core->setOutputProcessor($outputProcessor);
-
-$core->main();
+$core->setOutputProcessor($outputProcessor)
+     ->setArgs($argv)
+     ->main();

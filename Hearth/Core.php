@@ -24,6 +24,11 @@ use Symfony\Component\Yaml\Yaml;
 class Core
 {
     /**
+     * @var array The arguments given for the build script
+     */
+    protected $_args = array();
+    
+    /**
      * Current working directory
      *
      * This is the direction from which Hearth was called in the CLI
@@ -242,5 +247,41 @@ class Core
         }
 
         return $this->_configName;
+    }
+
+    /**
+     * setArgs
+     *
+     * Sets the arguments given from the application call
+     *
+     * @access public
+     * @param array $args
+     * @return \Hearth\Core
+     * @throws \InvalidArgumentException
+     */
+    public function setArgs($args)
+    {
+        if (!is_array($args)) {
+            throw new \InvalidArgumentException(
+                'Unexpected ' . gettype($args) . '. Expected an array'
+            );
+        }
+
+        $this->_args = $args;
+
+        return $this;
+    }
+
+    /**
+     * getArgs
+     *
+     * Gets the arguments given from the application call
+     *
+     * @access public
+     * @return array
+     */
+    public function getArgs()
+    {
+        return $this->_args;
     }
 }
