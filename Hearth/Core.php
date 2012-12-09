@@ -362,14 +362,20 @@ class Core
     public function failBuild(\Hearth\Exception\BuildException $e)
     {
         $this->getOutputProcessor()
-             ->setForeground('black')
-             ->setBackground('red')
              ->printLine(
-                 'Build Failed!'
+                 'Build Failed!',
+                 array(
+                     'foreground' => 'white',
+                     'background' => 'red',
+                     'attribute'  => 'bold',
+                 )
              )
              ->printLine(
                  $e->getMessage()
-                 . ' in ' . $e->getFile() . '#' . $e->getLine()
+                 . ' in ' . $e->getFile() . '#' . $e->getLine(),
+                 array(
+                     'foreground' => 'red',
+                 )
              );
 
         $this->setFailed(true);
