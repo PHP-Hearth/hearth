@@ -200,11 +200,18 @@ class Core
         $argumentCount = count($this->getArgs());
 
         switch ($argumentCount) {
+            case 1:
+                // List targets
+                $targetName = null;
+                break;
+
             case 2:
+                // Call target
                 $targetName = $this->getArgs(1);
                 break;
 
             case 3:
+                // Call target and specify config name
                 $this->setConfigName($this->getArgs(1));
                 $targetName = $this->getArgs(2);
                 break;
@@ -214,18 +221,53 @@ class Core
         // This creates a Target index array
         $this->_targetIndex = $this->_buildTargetIndex($this->getConfigName());
 
-        print_r($this->_targetIndex);
+        if (!is_null($targetName)) {
+            $this->_callTarget($targetName);
+        } else {
+            $this->showTargetIndex();
+        }
 
+        return $this;
+    }
+
+    public function showTargetIndex()
+    {
+        $index = $this->_targetIndex;
+
+        $collapsed = $this->_collapseTargetIndex();
+
+        $collapsed = implode("\r\n", $collapsed);
+
+        echo $collapsed;
+    }
+
+    protected function _collapseTargetIndex($data = null, $array = array())
+    {
+        if (is_null($data)) {
+            $data = $this->_targetIndex;
+        }
+
+        $array[] = $data->namespace;
+        foreach ($data->targets as $target) {
+            $array[] = '- ' . $target;
+        }
+        foreach ($data->children as $child) {
+            $this->_collapseTargetIndex($child, $array);
+        }
+
+        return $array;
+    }
+
+    protected function _callTarget($target)
+    {
         // Resolve the CLI Target name to an actual Target class
         $target = $this->_loadTarget($targetName);
 
         // Execute the Target
         $target->main();
-
-        return;
     }
 
-    public function _loadTarget($target)
+    protected function _loadTarget($target)
     {
         $parts = explode('/', $target);
 
