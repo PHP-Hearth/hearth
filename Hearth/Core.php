@@ -124,13 +124,11 @@ class Core
      * @access protected
      * @return void
      */
-    protected function _buildTargetIndex($config, $path = '')
+    protected function _buildTargetIndex($config)
     {
-        if ($path === '') {
-            $path = dirname(realpath($this->_cwd.'/'.$config)) . '/';
-        }
-        
-        $configData = $this->_loadConfigFile($path . basename($config));
+        $path = dirname(realpath($config)) . '/';
+
+        $configData = $this->_loadConfigFile(realpath($path.basename($config)));
 
         $element = (object) array(
             'namespace'  => (property_exists($configData, 'namespace')) ? $configData->namespace : null,
@@ -151,9 +149,13 @@ class Core
         }
 
         // Load any child Hearth configs
-        if (property_exists($configData, 'children')) {
-            foreach ((array) $configData->children as $name => $child) {
-                $element->children[$name] = $this->_buildTargetIndex($child, $element->path);
+        if (property_exists($configData, 'children') && count($configData->children)) {
+            foreach ($configData->children as $name => $childPath) {
+                $childPath = realpath($path.$childPath);
+
+                //echo $childPath; exit;
+
+                $element->children[$name] =  $this->_buildTargetIndex($childPath);
             }
         }
 
@@ -231,7 +233,7 @@ class Core
         echo $collapsed . "\r\n";
     }
 
-    protected function _collapseTargetIndex($data = null, $array = array(), $indent = '')
+    protected function _collapseTargetIndex($data = null, $indent = '')
     {
         if (is_null($data)) {
             $data = $this->_targetIndex;
@@ -250,7 +252,10 @@ class Core
 
         foreach ($data->children as $name => $child) {
             $array[] = $formatNamespace->getSequence() . $indent . $name . $formatNamespace->clear();
-            $this->_collapseTargetIndex($child, $array, $indent . '  ');
+            
+            $children = $this->_collapseTargetIndex($child, $indent . '  ');
+
+            $array = array_merge($array, $children);
         }
 
         return $array;
