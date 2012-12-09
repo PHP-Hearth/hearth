@@ -25,6 +25,11 @@ use Hearth\Target\Resolver;
 class Core
 {
     /**
+     * @var string The directory separator to use 
+     */
+    protected $_ds;
+    
+    /**
      * @var boolean Wheather or not the build is marked as failed
      */
     protected $_failed = false;
@@ -100,13 +105,14 @@ class Core
         $initialYml = '.hearth.yml';
 
         $resolver = new Resolver();
-        $resolver->setInitialYmlPath($initialYml);
+        $resolver->setDs($this->getDs())
+                 ->setInitialYmlPath($initialYml);
 
         switch ($argumentCount) {
             case 1:
                 // Show Index of all targets
                 $resolver->index();
-                exit;
+                return $this;
                 break;
 
             case 2:
@@ -116,8 +122,8 @@ class Core
 
             case 3:
                 // Call target and specify config name
+                $resolver->setInitialYmlPath($args[1]);
                 $targetArgs = explode('/', $args[2]);
-                $initialYml = $args[1];
                 break;
         }
         
@@ -209,6 +215,47 @@ class Core
         $this->_failed = $status;
 
         return $this;
+    }
+    
+    /**
+     * setDs
+     * 
+     * Sets the application directory separator to use
+     * 
+     * @access public
+     * @param string $char The directory separator to use
+     * @return \Hearth\Core
+     */
+    public function setDs($char)
+    {
+        if (!is_string($char)) {
+            throw new \InvalidArgumentException(
+                'Unexpected ' . gettype($char) . '. Expected a string'
+            );
+        }
+        
+        $this->_ds = $char;
+        
+        return $this;
+    }
+    
+    /**
+     * getDs
+     * 
+     * Gets the application directory separator to use
+     * 
+     * @access public
+     * @return string
+     */
+    public function getDs()
+    {
+        if (!isset($this->_ds)) {
+            throw new \UnexpectedValueException(
+                'No directory separator was set!'
+            );
+        }
+        
+        return $this->_ds;
     }
 
     /**

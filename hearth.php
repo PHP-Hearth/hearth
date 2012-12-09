@@ -25,14 +25,15 @@ $autoloader->setDs(HEARTH_DS)
 spl_autoload_register(array($autoloader, 'load'));
 
 // Autoload Composer libraries
-require dirname(__FILE__) . '/vendor/autoload.php';
+require dirname(__FILE__) . HEARTH_DS . 'vendor' . HEARTH_DS . 'autoload.php';
 
 $outputProcessor = new \Hearth\Console\Output();
 
 $core = new \Hearth\Core();
 
 $core->setOutputProcessor($outputProcessor)
-     ->setArgs($argv);
+     ->setArgs($argv)
+     ->setDs(HEARTH_DS);
 
 try {
 

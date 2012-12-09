@@ -26,6 +26,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Resolver
 {
+    protected $_ds;
     
     protected $_initialYmlPath;
 
@@ -83,10 +84,10 @@ class Resolver
 
         $this->setTargetName($targetName);
         $this->setTargetsPath(
-            dirname($lastChildYmlPath) . '/' . $lastChildYaml['targets']
+            dirname($lastChildYmlPath) . $this->getDs() . $lastChildYaml['targets']
         );
         $this->setTargetsNamespace($namespace);
-        $this->setLastChildTargetsPath('/' . $lastChildYaml['targets']);
+        $this->setLastChildTargetsPath($this->getDs() . $lastChildYaml['targets']);
     }
 
     public function index()
@@ -99,7 +100,10 @@ class Resolver
     protected function _displayIndex(array $index, $namespace = '')
     {
         if (isset($index['targets'])) {
-            $files = glob($namespace . $index['targets'] . '/*.php');
+            $files = glob(
+                preg_replace('#/#', $this->getDs(), $namespace) 
+                . $index['targets'] . $this->getDs() . '*.php'
+            );
             foreach ($files as $file) {
                 echo $namespace . basename($file, '.php') . "\n";
             }
@@ -176,7 +180,7 @@ class Resolver
 
     public function getTargetFile()
     {
-        return $this->getTargetsPath() . '/' . $this->getTargetName() . '.php';
+        return $this->getTargetsPath() .$this->getDs() . $this->getTargetName() . '.php';
     }
     public function setLastChildTargetsPath($path)
     {
@@ -185,6 +189,47 @@ class Resolver
     public function getLastChildTargetsPath()
     {
         return $this->_lastChildTargetsPath;
+    }
+    
+    /**
+     * setDs
+     * 
+     * Sets the application directory separator to use
+     * 
+     * @access public
+     * @param string $char The directory separator to use
+     * @return \Hearth\Core
+     */
+    public function setDs($char)
+    {
+        if (!is_string($char)) {
+            throw new \InvalidArgumentException(
+                'Unexpected ' . gettype($char) . '. Expected a string'
+            );
+        }
+        
+        $this->_ds = $char;
+        
+        return $this;
+    }
+    
+    /**
+     * getDs
+     * 
+     * Gets the application directory separator to use
+     * 
+     * @access public
+     * @return string
+     */
+    public function getDs()
+    {
+        if (!isset($this->_ds)) {
+            throw new \UnexpectedValueException(
+                'No directory separator was set!'
+            );
+        }
+        
+        return $this->_ds;
     }
 
     public function getTargetClassName()
