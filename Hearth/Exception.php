@@ -2,7 +2,7 @@
 
 namespace Hearth;
 
-class Exception
+class Exception extends \Exception
 {
 
 }
