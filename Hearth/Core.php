@@ -123,7 +123,7 @@ class Core
      * @access protected
      * @return void
      */
-    protected function _buildTargetIndex($config, $path = '', $tree = array())
+    protected function _buildTargetIndex($config, $path = '')
     {
         if ($path === '') {
             $path = dirname(realpath($this->_cwd.'/'.$config)) . '/';
@@ -139,7 +139,7 @@ class Core
             'targets'    => array(),
             'children'   => array(),
         );
-
+        
         // Load all the Targets Available
         if (file_exists($path.$element->targetPath)) {
             //get all image files with a .jpg extension.
@@ -163,11 +163,10 @@ class Core
         // Load any child Hearth configs
         if (property_exists($configData, 'children')) {
             foreach ((array) $configData->children as $child) {
-                $element->children[] = $this->_buildTargetIndex($child, $element->path, $tree);
+                $childElement = $this->_buildTargetIndex($child, $element->path);
+                $element->children[$childElement->namespace] = $childElement;
             }
         }
-
-        $tree[] = $element;
 
         return $element;
     }
@@ -203,22 +202,44 @@ class Core
 
         switch ($argumentCount) {
             case 2:
-                
+                $targetName = $this->getArgs(1);
                 break;
 
             case 3:
                 $this->setConfigName($this->getArgs(1));
+                $targetName = $this->getArgs(2);
                 break;
         }
 
         // Parse the base config file
         $this->_targetIndex = $this->_buildTargetIndex($this->getConfigName());
 
+        // Define requested Target
+        $this->output()->printLine($targetName);
 
         $this->output()->setBackground('blue')
                        ->setForeground('white')
                        ->dump($this->_targetIndex);
+
+        $target = $this->_loadTarget($targetName);
         return $this;
+    }
+
+    public function _loadTarget($target)
+    {
+        $parts = explode('/', $target);
+
+        $targetName = array_pop($parts);
+
+        // Traverse down the targetIndex
+        
+        $configSet = $this->_targetIndex;
+
+        foreach ($parts as $part) {
+            $configSet = $configSet->children[$part];
+        }
+
+        print_r($configSet);
     }
 
     /**

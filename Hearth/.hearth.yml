@@ -1,4 +1,6 @@
-namespace: HearthCore
+namespace: Hearth
 targets: Targets
 tasks: Tasks
 children:
+   - .hearth2.yml
+   - .hearth3.yml
