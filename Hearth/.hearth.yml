@@ -1,3 +1,4 @@
-namespace: Hearth/Target
+namespace: Hearth
 targets: Target
+tasks: Task
 children:

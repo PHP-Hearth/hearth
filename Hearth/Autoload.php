@@ -43,7 +43,7 @@ class Autoload
     {
         $file = str_replace('\\', $this->getDs(), $class).'.php';
 
-        if (file_exists($file)) {
+        if (file_exists($this->getBasePath() . $this->getDs() . $file)) {
             require_once $this->getBasePath() . $this->getDs() . $file;
         }
     }

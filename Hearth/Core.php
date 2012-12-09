@@ -174,7 +174,24 @@ class Core
                 "Unable to find configuration file: {$file}"
             );
         }
-        return (object) Yaml::parse($file);
+        return Yaml::parse($file);
+    }
+
+    protected function _resolveConfigPath($queue, $initial)
+    {
+        $path = $initial;
+        
+        for ($yml = $this->_loadConfigFile($initial);
+            count($queue) > 0;
+            $yml = $this->_loadConfigFile($path)) {
+
+            $child = array_shift($queue);
+
+            $path = $yml['children'][$child];
+
+        }
+
+        return $path;
     }
 
     /**
@@ -185,37 +202,38 @@ class Core
      */
     public function main()
     {
-        $this->_cwd = getcwd();
-
-        $argumentCount = count($this->getArgs());
+        $args = $this->getArgs();
+        $argumentCount = count($args);
+        $initialYml = '.hearth.yml';
 
         switch ($argumentCount) {
             case 1:
-                // List targets
-                $targetName = null;
+                die("list not yet implemented");
                 break;
 
             case 2:
                 // Call target
-                $targetName = $this->getArgs(1);
+                $targetArgs = explode('/', $args[1]);
                 break;
 
             case 3:
                 // Call target and specify config name
-                $this->setConfigName($this->getArgs(1));
-                $targetName = $this->getArgs(2);
+                $targetArgs = explode('/', $args[2]);
+                $initialYml = $args[1];
                 break;
         }
 
-        // Parse the base config file
-        // This creates a Target index array
-        $this->_targetIndex = $this->_buildTargetIndex($this->getConfigName());
 
-        if (!is_null($targetName)) {
-            $this->_callTarget($targetName);
-        } else {
-            $this->showTargetIndex();
-        }
+        $targetName =  array_pop($targetArgs);
+        $childQueue = $targetArgs;
+
+        $lastChildYamlPath = $this->_resolveConfigPath($childQueue, $initialYml);
+        $lastChildYaml = $this->_loadConfigFile($lastChildYamlPath);
+
+        $namespace = $lastChildYaml['namespace'];
+
+
+        echo "will look for target -- " . $targetName . " in ./" . dirname($lastChildYamlPath) . '/' . $lastChildYaml['targets'] . "/\n";
 
         return $this;
     }
