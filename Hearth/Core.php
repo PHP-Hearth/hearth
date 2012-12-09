@@ -189,9 +189,7 @@ class Core
     {
         $this->_cwd = getcwd();
 
-        global $argv;
-
-        $argumentCount = count($argv);
+        $argumentCount = count($this->getArgs());
 
         switch ($argumentCount) {
             case 2:
@@ -199,7 +197,7 @@ class Core
                 break;
 
             case 3:
-                $this->setConfigName($argv[1]);
+                $this->setConfigName($this->getArgs(1));
                 break;
         }
 
@@ -274,8 +272,14 @@ class Core
      * @access public
      * @return array
      */
-    public function getArgs()
+    public function getArgs($index = null)
     {
-        return $this->_args;
+        if (!is_null($index) && !array_key_exists($index, $this->_args)) {
+            throw new \InvalidArgumentException(
+                "Invalid argument specified, argument does not exist."
+            );
+        }
+
+        return (is_null($index)) ? $this->_args : $this->_args[$index];
     }
 }
