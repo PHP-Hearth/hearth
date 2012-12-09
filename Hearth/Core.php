@@ -33,34 +33,6 @@ class Core
      * @var array The arguments given for the build script
      */
     protected $_args = array();
-    
-    /**
-     * Current working directory
-     *
-     * This is the direction from which Hearth was called in the CLI
-     *
-     * @var string
-     * @access protected
-     */
-    protected $_cwd = null;
-
-    /**
-     * Default Hearth config file name
-     *
-     * @var string
-     * @access protected
-     */
-    protected $_defaultConfigName = 'Hearth/.hearth.yml';
-
-    /**
-     * Name of the initialized config file
-     *
-     * This is set in main()
-     *
-     * @var string
-     * @access protected
-     */
-    protected $_configName;
 
     /**
      * Index of targets available to Hearth
@@ -116,51 +88,6 @@ class Core
     }
 
     /**
-     * Build an index of available Targets
-     *
-     * This method creates a mapped index of all
-     * available Targets starting.
-     * 
-     * @access protected
-     * @return void
-     */
-    protected function _buildTargetIndex($config, $path = '')
-    {
-        if ($path === '') {
-            $path = dirname(realpath($this->_cwd.'/'.$config)) . '/';
-        }
-        
-        $configData = $this->_loadConfigFile($path . basename($config));
-
-        $element = (object) array(
-            'namespace'  => (property_exists($configData, 'namespace')) ? $configData->namespace : null,
-            'targetPath' => (property_exists($configData, 'targets')) ? $configData->targets : null,
-            'path'       => $path,
-            'targets'    => array(),
-            'children'   => array(),
-        );
-        
-        // Load all the Targets Available
-        if (file_exists($path.$element->targetPath)) {
-            //get all image files with a .jpg extension.
-            $targets = glob($path.$element->targetPath . "/*.php");
-
-            foreach ($targets as $target) {
-                $element->targets[] = substr(basename($target), 0, -4);
-            }
-        }
-
-        // Load any child Hearth configs
-        if (property_exists($configData, 'children')) {
-            foreach ((array) $configData->children as $name => $child) {
-                $element->children[$name] = $this->_buildTargetIndex($child, $element->path);
-            }
-        }
-
-        return $element;
-    }
-
-    /**
      * Primary procedure
      * 
      * @access public
@@ -204,113 +131,6 @@ class Core
         $target->main();
 
         return $this;
-    }
-
-    public function showTargetIndex()
-    {
-        $index = $this->_targetIndex;
-
-        $collapsed = $this->_collapseTargetIndex();
-
-        $collapsed = implode("\r\n", $collapsed);
-
-        echo $collapsed . "\r\n";
-    }
-
-    protected function _collapseTargetIndex($data = null, $array = array(), $indent = '')
-    {
-        if (is_null($data)) {
-            $data = $this->_targetIndex;
-        }
-
-        $formatNamespace = new Format();
-        $formatNamespace->setForeground('green')
-                        ->setAttribute('bold');
-
-        $formatTarget = new Format();
-        $formatTarget->setForeground('white');
-
-        foreach ($data->targets as $target) {
-            $array[] = $formatTarget->getSequence() . $indent . $target . $formatTarget->clear();
-        }
-
-        foreach ($data->children as $name => $child) {
-            $array[] = $formatNamespace->getSequence() . $indent . $name . $formatNamespace->clear();
-            $this->_collapseTargetIndex($child, $array, $indent . '  ');
-        }
-
-        return $array;
-    }
-
-    protected function _callTarget($target)
-    {
-        // Resolve the CLI Target name to an actual Target class
-        $target = $this->_loadTarget($target);
-
-        // Execute the Target
-        $target->main();
-    }
-
-    protected function _loadTarget($target)
-    {
-        $parts = explode('/', $target);
-
-
-        $targetName = array_pop($parts);
-
-        // Traverse down the targetIndex
-        
-        $configSet = $this->_targetIndex;
-
-        foreach ($parts as $part) {
-            $configSet = $configSet->children[$part];
-        }
-
-        $targetFile = $configSet->path.$configSet->targetPath.'/'.$targetName.'.php';
-
-        if (!file_exists($targetFile)) {
-            throw new \Hearth\Exception\FileNotFound(
-                "Unable to locate file: {$targetFile}"
-            );
-        }
-
-        require_once $targetFile;
-
-        $target = '\\' . str_replace('/', '\\', $configSet->namespace) . '\\' . $targetName;
-
-        $target = new $target();
-
-        return $target;
-    }
-
-    /**
-     * Set the configuration file name
-     *
-     * This sets the name of the configuration file that Hearth
-     * will use to build it's Target index from.
-     * 
-     * @param mixed $name Description.
-     *
-     * @access public
-     * @return mixed Value.
-     */
-    public function setConfigName($name)
-    {
-        if (!is_string($name)) {
-            throw new \UnexpectedValueException(
-                sprintf("Expected a string, got a %s", gettype($name))
-            );
-        }
-        $this->_configName = $name;
-    }
-
-    public function getConfigName()
-    {
-        if (empty($this->_configName)) {
-            $this->setConfigName($this->_defaultConfigName);
-        }
-
-        return $this->_configName;
     }
 
     /**
