@@ -31,7 +31,7 @@ class Output extends Formatter
 	public function printLine($string, Array $settings = null)
 	{
 		$this->_parseSettings($settings);
-		echo $this->getSequence() . $string . $this->clear();
+		echo $this->getSequence() . $string . "\r\n" . $this->clear();
 		return $this;
 	}
 

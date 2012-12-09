@@ -34,9 +34,7 @@ class DemoTarget Extends Target
      */
     public function main()
     {
-        $this->task('chmod')
-            ->setFile('some_file')
-            ->setPermissions(755);
+        $this->task('write')->setText('Hello World.');
         return;
     }
     

@@ -15,6 +15,8 @@
 
 namespace Hearth\Tasks;
 
+use Hearth\Task;
+
 /**
  * Chmod
  *
@@ -24,7 +26,7 @@ namespace Hearth\Tasks;
  * @package Tasks
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
-class Chmod
+class Chmod implements Task
 {
     /**
      * @var string The file to run the chmod command on
