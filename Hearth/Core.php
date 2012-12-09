@@ -158,11 +158,12 @@ class Core
         // Load any child Hearth configs
         if (property_exists($configData, 'children')) {
             foreach ((array) $configData->children as $child) {
-                $element->children = $this->_buildTargetIndex($child, $element->path);
+                $childElement = $this->_buildTargetIndex($child, $element->path);
+                $element->children[$childElement->namespace] = $childElement;
             }
         }
 
-        return $tree;
+        return $element;
     }
 
     /**
@@ -211,12 +212,11 @@ class Core
         // Define requested Target
         $this->output()->printLine($targetName);
 
-        $target = $this->_loadTarget($targetName);
-
         $this->output()->setBackground('blue')
                        ->setForeground('white')
                        ->dump($this->_targetIndex);
 
+        $target = $this->_loadTarget($targetName);
         return;
     }
 
@@ -228,11 +228,13 @@ class Core
 
         // Traverse down the targetIndex
         
-        $configSet = null;
+        $configSet = $this->_targetIndex;
 
         foreach ($parts as $part) {
-            $configSet = $configSet['children'];
+            $configSet = $configSet->children[$part];
         }
+
+        print_r($configSet);
     }
 
     /**
