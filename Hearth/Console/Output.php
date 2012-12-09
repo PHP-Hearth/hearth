@@ -96,6 +96,10 @@ class Output
             return $this->_format;
         }
 
+        if ($settings instanceof Format) {
+            return $settings;
+        }
+
         $tmpFormat = new Format();
         foreach ($settings as $setting => $value) {
             $methodName = 'set' . ucfirst($setting);
