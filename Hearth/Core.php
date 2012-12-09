@@ -37,7 +37,7 @@ class Core
      * @var string
      * @access protected
      */
-    protected $_defaultConfigName = '.hearth.yml';
+    protected $_defaultConfigName = 'Hearth/.hearth.yml';
 
     /**
      * Name of the initialized config file
@@ -66,18 +66,25 @@ class Core
      * @access protected
      * @return void
      */
-    protected function _buildTargetIndex($configName)
+    protected function _buildTargetIndex($configName, $path = null)
     {
-        $config = $this->_loadTarget($configName);
+        if (is_null($path)) {
+            $path = $this->_cwd . '/';
+        }
+        $file = $path.$configName;
 
-        
+        $configData = $this->_loadConfigFile($file);
     }
 
-    protected function _loadConfigFile($file, $path = null) {
-        if (is_null($path)) {
-            $path = $this->_cwd;
-        }
-        $file = $path.$this->getConfigName();
+    /**
+     * Parse a YML file
+     * 
+     * @param string $file Full path and filename to the YML file
+     *
+     * @access protected
+     * @return array
+     */
+    protected function _loadConfigFile($file) {
         if (!file_exists($file)) {
             throw new \Hearth\Exception\FileNotFound(
                 "Unable to find configuration file: {$file}"

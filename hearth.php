@@ -15,6 +15,17 @@
 
 define('HEARTH_DS', '/');
 
+function hearthAutoloader($class)
+{
+	$file = str_replace('\\', '/', $class).'.php';
+
+	if (file_exists($file)) {
+		require_once $file;
+	}	
+}
+
+spl_autoload_register('hearthAutoloader');
+
 require dirname(__FILE__) . HEARTH_DS . 'Hearth' . HEARTH_DS . 'Core.php';
 
 $core = new \Hearth\Core();
