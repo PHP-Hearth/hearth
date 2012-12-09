@@ -29,7 +29,7 @@ class Format
     /**
      * @var string The escape sequence to start fomatting
      */
-    protected $_escape = '\033[';
+    protected $_escape = "\033[";
 
     /**
      * @var string The separator for the formatting parameters
