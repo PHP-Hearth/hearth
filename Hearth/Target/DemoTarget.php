@@ -25,16 +25,19 @@ use Hearth\Target;
 class DemoTarget Extends Target
 {
     /**
-     * main
-     *
-     * Main task target procedure
+     * Primary target procedure
      *
      * @access public
      * @return void
      */
     public function main()
     {
-        $this->task('write')->setText('Hello World.');
+        // Define and add the Write task to the target
+        $write = new \Hearth\Task\Write();
+        $this->addTask($write)->setText('Hello World.');
+
+        $this->execute();
+
         return;
     }
     

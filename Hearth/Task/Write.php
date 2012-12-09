@@ -23,7 +23,7 @@ class Write implements TaskInterface
 
 	public function main()
 	{
-		echo $this->_string;
+		echo $this->_string . "\r\n";
 	}
 
 	public function setText($string)

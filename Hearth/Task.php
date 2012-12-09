@@ -12,7 +12,7 @@
  *          Some Rights Reserved
  */
 
-namespace Hearth\Core;
+namespace Hearth;
 
 /**
  * Task
@@ -33,5 +33,5 @@ interface Task
      * @access public
      * @return void
      */
-	public function main() {}
+	public function main();
 }

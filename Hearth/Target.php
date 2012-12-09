@@ -43,14 +43,18 @@ abstract class Target
      * Adds a task to the registry to be built on a target
      *
      * @access public
-     * @param string $task
+     * @param object $task
      * @return \Hearth\Target
      */
-    public function task($task)
+    public function addTask($task)
     {
+        if (!is_object($task)) {
+            throw new \UnexpectedValueException(
+                'Expected an object, got a ' . gettype($task)
+            );
+        }
         $this->addTaskToRegistry($task);
-
-        return $this;
+        return $task;
     }
 
     /**
@@ -78,18 +82,27 @@ abstract class Target
      */
     public function addTaskToRegistry($task)
     {
-        if (!is_string($task)) {
-            throw new \InvalidArgumentException(
-                'Could not add task to registry. '
-                . 'Unexpected ' . gettype($task) . '. Expected a string'
-            );
-        }
-
         array_push(
             $this->_taskRegistry,
             $task
         );
         
         return $this;
+    }
+
+    /**
+     * Execute tasks
+     * 
+     * @access public
+     * @return void
+     */
+    public function execute()
+    {
+        $tasks = $this->getTaskRegistry();
+        foreach ($tasks as $task) {
+            $task->main();
+        }
+
+        return;
     }
 }
