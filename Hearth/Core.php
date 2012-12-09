@@ -12,8 +12,8 @@
 
 namespace Hearth;
 
-use Symfony\Component\Yaml\Yaml;
 use Hearth\Ansi\Format;
+use Hearth\Target\Resolver;
 
 /**
  * Core
@@ -161,40 +161,6 @@ class Core
     }
 
     /**
-     * Parse a YML file
-     * 
-     * @param string $file Full path and filename to the YML file
-     *
-     * @access protected
-     * @return array
-     */
-    protected function _loadConfigFile($file) {
-        if (!file_exists($file)) {
-            throw new \Hearth\Exception\FileNotFound(
-                "Unable to find configuration file: {$file}"
-            );
-        }
-        return Yaml::parse($file);
-    }
-
-    protected function _resolveConfigPath($queue, $initial)
-    {
-        $path = $initial;
-        
-        for ($yml = $this->_loadConfigFile($initial);
-            count($queue) > 0;
-            $yml = $this->_loadConfigFile($path)) {
-
-            $child = array_shift($queue);
-
-            $path = $yml['children'][$child];
-
-        }
-
-        return $path;
-    }
-
-    /**
      * Primary procedure
      * 
      * @access public
@@ -224,16 +190,10 @@ class Core
         }
 
 
-        $targetName =  array_pop($targetArgs);
-        $childQueue = $targetArgs;
 
-        $lastChildYamlPath = $this->_resolveConfigPath($childQueue, $initialYml);
-        $lastChildYaml = $this->_loadConfigFile($lastChildYamlPath);
-
-        $namespace = $lastChildYaml['namespace'];
 
         $resolver = new Resolver();
-        $resolver->setInitialYml($initialYml)
+        $resolver->setInitialYmlPath($initialYml)
             ->lookup($targetArgs);
 
         echo "will look for target -- " . $resolver->getTargetName() . " in " . $resolver->getTargetsPath() . "\n";
