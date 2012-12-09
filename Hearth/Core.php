@@ -157,9 +157,8 @@ class Core
 
         // Load any child Hearth configs
         if (property_exists($configData, 'children')) {
-            foreach ((array) $configData->children as $child) {
-                $childElement = $this->_buildTargetIndex($child, $element->path);
-                $element->children[$childElement->namespace] = $childElement;
+            foreach ((array) $configData->children as $name => $child) {
+                $element->children[$name] = $this->_buildTargetIndex($child, $element->path);
             }
         }
 
@@ -207,16 +206,17 @@ class Core
         }
 
         // Parse the base config file
+        // This creates a Target index array
         $this->_targetIndex = $this->_buildTargetIndex($this->getConfigName());
 
-        // Define requested Target
-        $this->output()->printLine($targetName);
+        print_r($this->_targetIndex);
 
-        $this->output()->setBackground('blue')
-                       ->setForeground('white')
-                       ->dump($this->_targetIndex);
-
+        // Resolve the CLI Target name to an actual Target class
         $target = $this->_loadTarget($targetName);
+
+        // Execute the Target
+        $target->main();
+
         return;
     }
 
@@ -234,7 +234,21 @@ class Core
             $configSet = $configSet->children[$part];
         }
 
-        print_r($configSet);
+        $targetFile = $configSet->path.$configSet->targetPath.'/'.$targetName.'.php';
+
+        if (!file_exists($targetFile)) {
+            throw new \Hearth\Exception\FileNotFound(
+                "Unable to locate file: {$targetFile}"
+            );
+        }
+
+        require_once $targetFile;
+
+        $target = '\\' . str_replace('/', '\\', $configSet->namespace) . '\\' . str_replace('/', '\\', $configSet->targetPath) . '\\' . $targetName;
+
+        $target = new $target();
+
+        return $target;
     }
 
     /**
