@@ -196,7 +196,12 @@ class Core
         
         $resolver->lookup($targetArgs);
 
-        echo "will look for target -- " . $resolver->getTargetName() . " in " . $resolver->getTargetsPath() . "\n";
+        require $resolver->getTargetFile();
+
+        $targetName = $resolver->getTargetClassName();
+        $target = new $targetName();
+
+        $target->main();
 
         return $this;
     }

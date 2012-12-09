@@ -33,6 +33,10 @@ class Resolver
 
     protected $_targetsPath;
 
+    protected $_targetsNamespace;
+
+    protected $_lastChildTargetsPath;
+
     /**
      * Parse a YML file
      *
@@ -81,6 +85,8 @@ class Resolver
         $this->setTargetsPath(
             dirname($lastChildYmlPath) . '/' . $lastChildYaml['targets']
         );
+        $this->setTargetsNamespace($namespace);
+        $this->setLastChildTargetsPath('/' . $lastChildYaml['targets']);
     }
 
     public function index()
@@ -156,5 +162,37 @@ class Resolver
     public function getTargetsPath()
     {
         return $this->_targetsPath;
+    }
+
+    public function getTargetsNamespace()
+    {
+        return $this->_targetsNamespace;
+    }
+
+    public function setTargetsNamespace($namespace)
+    {
+        $this->_targetsNamespace = $namespace;
+    }
+
+    public function getTargetFile()
+    {
+        return $this->getTargetsPath() . '/' . $this->getTargetName() . '.php';
+    }
+    public function setLastChildTargetsPath($path)
+    {
+        $this->_lastChildTargetsPath = $path;
+    }
+    public function getLastChildTargetsPath()
+    {
+        return $this->_lastChildTargetsPath;
+    }
+
+    public function getTargetClassName()
+    {
+        $className = '\\' . $this->getTargetsNamespace();
+        $className .= preg_replace('#/#', '\\', trim($this->getLastChildTargetsPath(), '.'));
+        $className .= '\\' . $this->getTargetName();
+
+        return $className;
     }
 }
