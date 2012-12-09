@@ -15,7 +15,7 @@
 
 namespace Hearth\Console;
 
-use \Hearth\Ansi\Format as Formatter;
+use \Hearth\Ansi\Format;
 
 /**
  * Output
@@ -26,39 +26,99 @@ use \Hearth\Ansi\Format as Formatter;
  * @package Console
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
  */
-class Output extends Formatter
+class Output
 {
-	public function printLine($string, Array $settings = null)
+    /**
+     * @var \Hearth\Ansi\Format The format output sequence to use 
+     */
+    protected $_format;
+
+    /**
+     * printLine
+     *
+     * Outputs a single line to the console
+     *
+     * @access public
+     * @param string $string The string to output
+     * @param array $settings
+     * @return \Hearth\Console\Output
+     */
+    public function printLine($string, Array $settings = null)
 	{
-		$this->_parseSettings($settings);
-		echo $this->getSequence() . $string . "\r\n" . $this->clear();
+		$format = $this->getFormat($settings);
+        
+		echo $format->getSequence() . $string . "\n" . $format->clear();
+        
 		return $this;
 	}
 
+    /**
+     * dump
+     *
+     * Dumps a variable to the output
+     *
+     * @access public
+     * @param mixed $variable the variable to dump
+     * @param array $settings
+     * @return \Hearth\Console\Output
+     */
 	public function dump($variable, Array $settings = null)
 	{
-		$this->_parseSettings($settings);
-		echo $this->getSequence();
+		$format = $this->getFormat($settings);
+
+		echo $format->getSequence();
 		print_r($variable);
-		echo $this->clear();
+        echo "\n";
+		echo $format->clear();
+
 		return $this;
 	}
 
-	protected function _parseSettings(Array $settings = null)
-	{
-		if (is_array($settings)) {
-			foreach($settings as $setting => $value) {
-				$this->_applySetting($setting, $value);
-			}
-		}
-	}
+    /**
+     * getFormat
+     *
+     * Gets the format object to use
+     *
+     * @access public
+     * @param array $settings
+     * @return \Hearth\Ansi\Format
+     */
+    public function getFormat($settings = null)
+    {
+        if (!$this->_format && !isset($settings)) {
+            $tmpFormat = new Format();
+            $tmpFormat->setAttribute('clear');
+            
+            return $tmpFormat;
+        }
 
-	protected function _applySetting($setting, $value)
-	{
-		$methodName = 'set'.ucfirst($setting);
+        if (!isset($settings)) {
+            return $this->_format;
+        }
 
-		if (method_exists($this, $methodName)) {
-			$this->$methodName($value);
-		}
-	}
+        $tmpFormat = new Format();
+        foreach ($settings as $setting => $value) {
+            $methodName = 'set' . ucfirst($setting);
+
+            $tmpFormat->$methodName($value);
+        }
+
+        return $tmpFormat;
+    }
+
+    /**
+     * setFormat
+     *
+     * Sets the default format to use
+     *
+     * @access public
+     * @param \Hearth\Ansi\Format $format
+     * @return \Hearth\Console\Output
+     */
+    public function setFormat(Format $format = null)
+    {
+        $this->_format = $format;
+
+        return $this;
+    }
 }
