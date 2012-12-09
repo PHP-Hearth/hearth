@@ -73,7 +73,7 @@ class Core
      * @access public
      * @return \Hearth\Console\Output
      */
-    public function getOutputProcessor()
+    public function output($value)
     {
         if (is_null($this->_outputProcessor)) {
             throw new \Hearth\Exception\NoOutputFormatterFound(
@@ -201,8 +201,10 @@ class Core
         // Parse the base config file
         $this->_targetIndex = $this->_buildTargetIndex($this->getConfigName());
 
-        $this->getOutputProcessor()->dump($this->_targetIndex);
 
+        $this->output()->setBackground('blue')
+                       ->setForeground('white')
+                       ->dump($this->_targetIndex);
         return;
     }
 
