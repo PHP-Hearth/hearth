@@ -12,6 +12,8 @@
 
 namespace Hearth;
 
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * Core
  *
@@ -66,14 +68,20 @@ class Core
      * @access protected
      * @return void
      */
-    protected function _buildTargetIndex($configName, $path = null)
+    protected function _buildTargetIndex($config)
     {
-        if (is_null($path)) {
-            $path = $this->_cwd . '/';
-        }
-        $file = $path.$configName;
+        $configData = $this->_loadConfigFile($config);
 
-        $configData = $this->_loadConfigFile($file);
+        $this->_targetIndex[] = array(
+            'tasks' => 
+        );
+
+        // Load any child Hearth configs
+        if (property_exists($configData, 'children')) {
+            foreach ((array) $configData->children as $child) {
+                $this->_buildTargetIndex($child);
+            }
+        }
     }
 
     /**
@@ -90,7 +98,7 @@ class Core
                 "Unable to find configuration file: {$file}"
             );
         }
-        return yaml_parse_file($file);
+        return (object) Yaml::parse($file);
     }
 
     /**

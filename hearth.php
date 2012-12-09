@@ -26,6 +26,11 @@ function hearthAutoloader($class)
 
 spl_autoload_register('hearthAutoloader');
 
+// Autoload Composer libraries
+if (file_exists('vendor/autoload.php')) {
+	require 'vendor/autoload.php';
+}
+
 require dirname(__FILE__) . HEARTH_DS . 'Hearth' . HEARTH_DS . 'Core.php';
 
 $core = new \Hearth\Core();
