@@ -24,7 +24,6 @@ namespace Hearth;
  */
 abstract class Target
 {
-
     /**
      * @var array The registry of task calls
      */

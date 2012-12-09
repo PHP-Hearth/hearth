@@ -24,7 +24,6 @@ use Hearth\Target;
  */
 class DemoTarget Extends Target
 {
-
     /**
      * main
      *
