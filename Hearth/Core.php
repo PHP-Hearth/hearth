@@ -73,7 +73,7 @@ class Core
      * @access public
      * @return \Hearth\Console\Output
      */
-    public function output($value)
+    public function output()
     {
         if (is_null($this->_outputProcessor)) {
             throw new \Hearth\Exception\NoOutputFormatterFound(
