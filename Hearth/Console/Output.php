@@ -43,7 +43,7 @@ class Output implements \Hearth\Console\Output\OutputInterface
      * @param array $settings
      * @return \Hearth\Console\Output
      */
-    public function printLine($string, Array $settings = null)
+    public function printLine($string, $settings = null)
 	{
 		$format = $this->getFormat($settings);
         

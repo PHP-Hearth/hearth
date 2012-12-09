@@ -98,30 +98,26 @@ class Core
         $args = $this->getArgs();
         $argumentCount = count($args);
         $initialYml = '.hearth.yml';
+        $format = new Format();
+        $format->setForeground('green');
+        
+        $this->getOutputProcessor()->printLine(
+            'Hearth Build: ' . getcwd() . $this->getDs() . $initialYml,
+            $format
+        );
 
         $resolver = new Resolver();
         $resolver->setDs($this->getDs())
                  ->setOutputProcessor($this->getOutputProcessor())
                  ->setInitialYmlPath($initialYml);
-
-        switch ($argumentCount) {
-            case 1:
-                // Show Index of all targets
-                $resolver->index();
-                return $this;
-                break;
-
-            case 2:
-                // Call target
-                $targetArgs = explode('/', $args[1]);
-                break;
-
-            case 3:
-                // Call target and specify config name
-                $resolver->setInitialYmlPath($args[1]);
-                $targetArgs = explode('/', $args[2]);
-                break;
+        
+        if ($argumentCount === 1) {
+            $resolver->index();
+            return $this;
         }
+        
+        
+        $targetArgs = explode('/', $args[1]);
         
         $resolver->lookup($targetArgs);
 
