@@ -13,7 +13,7 @@
  *          Some Rights Reserved
  */
 
-namespace Hearth\Task;
+namespace Hearth\Build\Task;
 
 use Hearth\Task as TaskInterface;
 

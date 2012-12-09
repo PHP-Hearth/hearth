@@ -13,7 +13,7 @@
  *          Some Rights Reserved
  */
 
-namespace Hearth\Tasks;
+namespace Hearth\Build\Tasks;
 
 use Hearth\Task;
 

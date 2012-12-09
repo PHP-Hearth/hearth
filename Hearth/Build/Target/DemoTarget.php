@@ -11,7 +11,7 @@
  *          Some Rights Reserved
  */
 
-namespace Hearth\Target;
+namespace Hearth\Build\Target;
 
 use Hearth\Target;
 
