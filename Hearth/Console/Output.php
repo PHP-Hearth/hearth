@@ -28,14 +28,14 @@ use \Hearth\Ansi\Format as Formatter;
  */
 class Output extends Formatter
 {
-	public function printLine($string, Array $settings)
+	public function printLine($string, Array $settings = null)
 	{
 		$this->_parseSettings($settings);
 		echo $this->getSequence() . $string . $this->clear();
 		return $this;
 	}
 
-	public function dump($variable, Array $settings)
+	public function dump($variable, Array $settings = null)
 	{
 		$this->_parseSettings($settings);
 		echo $this->getSequence();
@@ -44,10 +44,12 @@ class Output extends Formatter
 		return $this;
 	}
 
-	protected function _parseSettings(Array $settings)
+	protected function _parseSettings(Array $settings = null)
 	{
-		foreach($settings as $setting => $value) {
-			$this->_applySetting($setting, $value);
+		if (is_array($settings)) {
+			foreach($settings as $setting => $value) {
+				$this->_applySetting($setting, $value);
+			}
 		}
 	}
 

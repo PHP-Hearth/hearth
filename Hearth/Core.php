@@ -201,15 +201,7 @@ class Core
         // Parse the base config file
         $this->_targetIndex = $this->_buildTargetIndex($this->getConfigName());
 
-        $this->getOutputProcessor()->printLine('Something cool.', array(
-            'background' => 'white',
-            'foreground' => 'black',
-        ));
-
-        $this->getOutputProcessor()->dump($this->_targetIndex, array(
-            'background' => 'white',
-            'foreground' => 'black',
-        ));
+        $this->getOutputProcessor()->dump($this->_targetIndex);
 
         return;
     }
