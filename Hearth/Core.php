@@ -238,7 +238,7 @@ class Core
 
         $collapsed = implode("\r\n", $collapsed);
 
-        echo $collapsed;
+        echo $collapsed . "\r\n";
     }
 
     protected function _collapseTargetIndex($data = null, $array = array())
