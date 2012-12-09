@@ -15,18 +15,14 @@
 
 define('HEARTH_DS', '/');
 
-function hearthAutoloader($class)
-{
-	$file = str_replace('\\', '/', $class).'.php';
+require dirname(__FILE__) . HEARTH_DS . 'Hearth' . HEARTH_DS . 'Autoload.php';
 
-	if (file_exists($file)) {
-		require_once $file;
-	}	
-}
+$autoloader = new \Hearth\Autoload();
 
-spl_autoload_register('hearthAutoloader');
+$autoloader->setDs(HEARTH_DS)
+    ->setBasePath(dirname(__FILE__));
 
-require dirname(__FILE__) . HEARTH_DS . 'Hearth' . HEARTH_DS . 'Core.php';
+spl_autoload_register(array($autoloader, 'load'));
 
 $core = new \Hearth\Core();
 
