@@ -50,7 +50,7 @@ class Core
      * @var string
      * @access protected
      */
-    protected $_defaultConfigName = 'Hearth/.hearth.yml';
+    protected $_defaultConfigName = '.hearth.yml';
 
     /**
      * Name of the initialized config file
@@ -68,7 +68,7 @@ class Core
      * @var array
      * @access protected
      */
-    protected $_targetIndex = array();
+    protected $_targetIndex = null;
 
     /**
      * Output Processor cache
@@ -149,12 +149,9 @@ class Core
         }
 
         // Load any child Hearth configs
-        if (property_exists($configData, 'children') && count($configData->children)) {
-            foreach ($configData->children as $name => $childPath) {
+        if (property_exists($configData, 'children')) {
+            foreach ((array) $configData->children as $name => $childPath) {
                 $childPath = realpath($path.$childPath);
-
-                //echo $childPath; exit;
-
                 $element->children[$name] =  $this->_buildTargetIndex($childPath);
             }
         }
@@ -193,30 +190,25 @@ class Core
 
         switch ($argumentCount) {
             case 1:
-                // List targets
-                $targetName = null;
+                $this->showTargetIndex();
                 break;
 
             case 2:
                 // Call target
-                $targetName = $this->getArgs(1);
+                $target = explode('/', $this->getArgs(1));
                 break;
 
             case 3:
                 // Call target and specify config name
                 $this->setConfigName($this->getArgs(1));
-                $targetName = $this->getArgs(2);
+                $target = explode('/', $this->getArgs(2));
                 break;
         }
 
-        // Parse the base config file
-        // This creates a Target index array
-        $this->_targetIndex = $this->_buildTargetIndex($this->getConfigName());
-
-        if (!is_null($targetName)) {
-            $this->_callTarget($targetName);
-        } else {
-            $this->showTargetIndex();
+        if (isset($target)) {
+            $resolver = new \Hearth\Target\Resolver();
+            $resolver->setInitialYmlPath($this->getConfigName())
+                     ->lookup($target);
         }
 
         return $this;
@@ -224,7 +216,9 @@ class Core
 
     public function showTargetIndex()
     {
-        $index = $this->_targetIndex;
+        $this->_targetIndex = $this->_buildTargetIndex($this->getConfigName());
+
+        print_r($this->_targetIndex);
 
         $collapsed = $this->_collapseTargetIndex();
 
@@ -235,6 +229,8 @@ class Core
 
     protected function _collapseTargetIndex($data = null, $indent = '')
     {
+        $array = array();
+
         if (is_null($data)) {
             $data = $this->_targetIndex;
         }

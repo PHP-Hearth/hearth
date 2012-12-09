@@ -1,4 +1,0 @@
-namespace: Hearth/Target
-targets: Target
-children:
-   vendor: ../vendor/some/random/Vendor/Package/.hearth.yml

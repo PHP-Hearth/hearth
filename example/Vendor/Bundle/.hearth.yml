@@ -1,0 +1,4 @@
+namespace: Vendor/Bundle
+targets: Target
+children:
+   vendor: ../../../vendor/some/random/Vendor/Package/.hearth.yml

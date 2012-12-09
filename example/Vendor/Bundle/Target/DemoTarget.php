@@ -11,7 +11,7 @@
  *          Some Rights Reserved
  */
 
-namespace Hearth\Target;
+namespace Example\Target;
 
 use Hearth\Target;
 
@@ -33,7 +33,7 @@ class DemoTarget Extends Target
     public function main()
     {
         // Define and add the Write task to the target
-        $write = new \Hearth\Task\Write();
+        $write = new \Example\Task\Write();
 
         // Could have defined $write here too....
         // Ex:

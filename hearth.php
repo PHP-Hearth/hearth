@@ -25,8 +25,8 @@ $autoloader->setDs(HEARTH_DS)
 spl_autoload_register(array($autoloader, 'load'));
 
 // Autoload Composer libraries
-if (file_exists('vendor/autoload.php')) {
-	require 'vendor/autoload.php';
+if (file_exists(dirname(__FILE__) . HEARTH_DS . 'vendor/autoload.php')) {
+	require dirname(__FILE__) . HEARTH_DS . 'vendor/autoload.php';
 }
 
 $outputProcessor = new \Hearth\Console\Output();
