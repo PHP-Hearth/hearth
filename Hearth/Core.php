@@ -60,6 +60,46 @@ class Core
     protected $_targetIndex = array();
 
     /**
+     * Output Processor cache
+     *
+     * @var mixed
+     * @access protected
+     */
+    protected $_outputProcessor = null;
+
+    /**
+     * Retrieve an output processor object
+     * 
+     * @access public
+     * @return \Hearth\Console\Output
+     */
+    public function getOutputProcessor()
+    {
+        if (is_null($this->_outputProcessor)) {
+            throw new \Hearth\Exception\NoOutputFormatterFound(
+                "No output processor has been configured."
+            );
+        }
+
+        return $this->_outputProcessor;
+    }
+
+    /**
+     * Set an output processor
+     * 
+     * @param \Output $outputProcessor
+     *
+     * @access public
+     * @return \Hearth\Core
+     */
+    public function setOutputProcessor(Console\Output $outputProcessor)
+    {
+        $this->_outputProcessor = $outputProcessor;
+
+        return $this;
+    }
+
+    /**
      * Build an index of available Targets
      *
      * This method creates a mapped index of all
@@ -161,7 +201,15 @@ class Core
         // Parse the base config file
         $this->_targetIndex = $this->_buildTargetIndex($this->getConfigName());
 
-        print_r($this->_targetIndex);
+        $this->getOutputProcessor()->printLine('Something cool.', array(
+            'background' => 'white',
+            'foreground' => 'black',
+        ));
+
+        $this->getOutputProcessor()->dump($this->_targetIndex, array(
+            'background' => 'white',
+            'foreground' => 'black',
+        ));
 
         return;
     }

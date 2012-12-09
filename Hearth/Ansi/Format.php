@@ -45,40 +45,40 @@ class Format
      * @var array A map of attribute names to output values
      */
     public $attributes = array(
-        'clear' => 0,
-        'bold' => 1,
+        'clear'      => 0,
+        'bold'       => 1,
         'underscore' => 4,
-        'blink' => 5,
-        'reverse' => 7,
-        'concealed' => 8,
+        'blink'      => 5,
+        'reverse'    => 7,
+        'concealed'  => 8,
     );
 
     /**
      * @var array A map of foreground colors to their output values
      */
     public $foregrounds = array(
-        'black' => 30,
-        'red' => 31,
-        'green' => 32,
-        'yellow' => 33,
-        'blue' => 34,
+        'black'   => 30,
+        'red'     => 31,
+        'green'   => 32,
+        'yellow'  => 33,
+        'blue'    => 34,
         'magenta' => 35,
-        'cyan' => 36,
-        'white' => 37,
+        'cyan'    => 36,
+        'white'   => 37,
     );
 
     /**
      * @var array A map of background colors to their output values
      */
     public $backgrounds = array(
-        'black' => 40,
-        'red' => 41,
-        'green' => 42,
-        'yellow' => 43,
-        'blue' => 44,
+        'black'   => 40,
+        'red'     => 41,
+        'green'   => 42,
+        'yellow'  => 43,
+        'blue'    => 44,
         'magenta' => 45,
-        'cyan' => 46,
-        'white' => 47,
+        'cyan'    => 46,
+        'white'   => 47,
     );
 
     /**

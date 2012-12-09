@@ -29,6 +29,10 @@ if (file_exists('vendor/autoload.php')) {
 	require 'vendor/autoload.php';
 }
 
+$outputProcessor = new \Hearth\Console\Output();
+
 $core = new \Hearth\Core();
+
+$core->setOutputProcessor($outputProcessor);
 
 $core->main();
