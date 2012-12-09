@@ -33,7 +33,7 @@ class DemoTarget Extends Target
     public function main()
     {
 
-        echo "Hello World\n"; exit;
+        echo "Hello World\n"; return;
         // Define and add the Write task to the target
         $write = new \Hearth\Task\Write();
 

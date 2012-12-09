@@ -95,12 +95,13 @@ class Core
      */
     public function main()
     {
-        $args = $this->getArgs();
+        $args          = $this->getArgs();
         $argumentCount = count($args);
-        $initialYml = '.hearth.yml';
-        $format = new Format();
-        $format->setForeground('green');
+        $initialYml    = '.hearth.yml';
+        $time          = microtime();
+        $format        = new Format();
         
+        $format->setForeground('green');
         $this->getOutputProcessor()->printLine(
             'Hearth Build: ' . getcwd() . $this->getDs() . $initialYml,
             $format
@@ -116,9 +117,7 @@ class Core
             return $this;
         }
         
-        
         $targetArgs = explode('/', $args[1]);
-        
         $resolver->lookup($targetArgs);
 
         require $resolver->getTargetFile();
@@ -127,6 +126,19 @@ class Core
         $target = new $targetName();
 
         $target->main();
+        
+        $this->getOutputProcessor()->printLn('');
+        $this->getOutputProcessor()->printLine(
+            'Build Successful!',
+            $format
+        );
+        
+        $timeDiff = microtime() - $time;
+        $this->getOutputProcessor()->printLine(
+            'Build execution time: ' . $timeDiff . 's',
+            $format
+        );
+        $this->getOutputProcessor()->printLn('');
 
         return $this;
     }
