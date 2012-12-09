@@ -5,7 +5,7 @@
  * Core of application
  * 
  * @category Hearth
- * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
+ * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
  */
 

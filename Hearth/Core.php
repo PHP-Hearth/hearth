@@ -5,8 +5,6 @@
  * Hearth Core class
  *
  * @category Hearth
- * @package Core
- * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
  */
 
@@ -16,7 +14,7 @@ namespace Hearth;
  * Core
  *
  * @category Hearth
- * @package Core
+ * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
  */
 class Core
