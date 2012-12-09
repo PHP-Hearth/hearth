@@ -5,11 +5,9 @@
  * Hearth Core class
  *
  * @category Hearth
+ * @package Core
+ * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
- * @version 0.0.0
- * @license http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
- *          Attribution-NonCommercial-ShareAlike 3.0 Unported
- *          Some Rights Reserved
  */
 
 namespace Hearth;
@@ -18,58 +16,175 @@ namespace Hearth;
  * Core
  *
  * @category Hearth
- * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
+ * @package Core
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
  */
 class Core
 {
     /**
-     * Constructor
+     * Current working directory
+     *
+     * This is the direction from which Hearth was called in the CLI
+     *
+     * @var string
+     * @access protected
+     */
+    protected $_cwd = null;
+
+    /**
+     * Default Hearth config file name
+     *
+     * @var string
+     * @access protected
+     */
+    protected $_defaultConfigName = '.hearth.yml';
+
+    /**
+     * Name of the initialized config file
+     *
+     * This is set in main()
+     *
+     * @var string
+     * @access protected
+     */
+    protected $_configName;
+
+    /**
+     * Index of targets available to Hearth
+     *
+     * @var array
+     * @access protected
+     */
+    protected $_targetIndex = array();
+
+    /**
+     * Build an index of available Targets
+     *
+     * This method creates a mapped index of all
+     * available Targets starting.
+     * 
+     * @access protected
+     * @return void
+     */
+    protected function _buildTargetIndex($configName)
+    {
+        $config = $this->_loadTarget($configName);
+
+        
+    }
+
+    protected function _loadConfigFile($file, $path = null) {
+        if (is_null($path)) {
+            $path = $this->_cwd;
+        }
+        $file = $path.$this->getConfigName();
+        if (!file_exists($file)) {
+            throw new \Hearth\Exception\FileNotFound(
+                "Unable to find configuration file: {$file}"
+            );
+        }
+        return yaml_parse_file($file);
+    }
+
+    /**
+     * Primary procedure
+     * 
+     * @access public
+     * @return void
+     */
+    public function main()
+    {
+        $this->_cwd = getcwd();
+
+        global $argv;
+
+        $argumentCount = count($argv);
+
+        switch ($argumentCount) {
+            case 2:
+                
+                break;
+
+            case 3:
+                $this->setConfigName($argv[1]);
+                break;
+        }
+
+        // Parse the base config file
+        $this->_buildTargetIndex($this->getConfigName());
+
+        return;
+    }
+
+    /**
+     * Set the configuration file name
+     *
+     * This sets the name of the configuration file that Hearth
+     * will use to build it's Target index from.
+     * 
+     * @param mixed $name Description.
      *
      * @access public
      * @return mixed Value.
      */
-    public function __construct()
+    public function setConfigName($name)
     {
-
+        if (!is_string($name)) {
+            throw new \UnexpectedValueException(
+                sprintf("Expected a string, got a %s", gettype($name))
+            );
+        }
+        $this->_configName = $name;
     }
 
+    public function getConfigName()
+    {
+        if (empty($this->_configName)) {
+            $this->setConfigName($this->_defaultConfigName);
+        }
+
+        return $this->_configName;
+    }
+
+    
     /**
      * Execute a Hearth Target
      *
      * @param string $target Target name
      *
      * @access public
-     * @return void
+     * @return \Hearth\Core
      */
     public function run($target)
     {
-        // Call and excute a target
-    }
-
-    /**
-     * Add a Target location to the loader
-     * 
-     * @param string|array $locations
-     *
-     * @access public
-     * @return \Hearth\Core
-     */
-    public function addTargetLocation($locations)
-    {
-        foreach ((array) $locations as $location) {
-            // Validate that the location is a string
-            if (!is_string($location)) {
-                throw new \InvalidArgumentException(
-                    'A location must be a string.'
-                );
-            }
-            // Check if this location is already in the stack
-            if (!in_array($location, $this->_locations) {
-                $this->_locations[] = $location;
-            }
-        }
-
+        $this->_buildTargetIndex(getcwd());
+        $target = $this->_loadTarget($target);
         return $this;
+    }
+    
+    /**
+     * Load a Target Class
+     *
+     * Requires a class file based on the value of $target.
+     * The value of $target should be the fully qualified
+     * namespace of the Target class you wish to load.
+     *
+     * Ex.
+     * $target = /path/to/some/bundle/Targets/MyTarget
+     *
+     * This will attempt to load the file:
+     * /path/to/some/bundle/Targets/MyTarget.php
+     *
+     * Then it will create a new instance of:
+     * \
+     * 
+     * @param string $target /path/to/Target/SomeTarget
+     *
+     * @access protected
+     * @return mixed Value.
+     */
+    protected function _loadTarget($target)
+    {
+        
     }
 }
