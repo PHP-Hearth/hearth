@@ -35,7 +35,7 @@ abstract class Target
      * @access public
      * @return void
      */
-    public function main();
+    abstract public function main();
 
     /**
      * task

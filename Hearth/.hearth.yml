@@ -1,6 +1,4 @@
 namespace: Hearth
-targets: Targets
-tasks: Tasks
+targets: Target
+tasks: Task
 children:
-   - .hearth2.yml
-   - .hearth3.yml
