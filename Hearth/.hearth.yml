@@ -1,4 +1,4 @@
 namespace: Hearth
-targets: Build/Targets
-tasks: Build/Tasks
+targets: Build/Target
+tasks: Build/Task
 children:

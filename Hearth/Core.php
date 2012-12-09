@@ -172,9 +172,14 @@ class Core
         $argumentCount = count($args);
         $initialYml = '.hearth.yml';
 
+        $resolver = new Resolver();
+        $resolver->setInitialYmlPath($initialYml);
+
         switch ($argumentCount) {
             case 1:
-                die("list not yet implemented");
+                // Show Index of all targets
+                $resolver->index();
+                exit;
                 break;
 
             case 2:
@@ -188,13 +193,8 @@ class Core
                 $initialYml = $args[1];
                 break;
         }
-
-
-
-
-        $resolver = new Resolver();
-        $resolver->setInitialYmlPath($initialYml)
-            ->lookup($targetArgs);
+        
+        $resolver->lookup($targetArgs);
 
         echo "will look for target -- " . $resolver->getTargetName() . " in " . $resolver->getTargetsPath() . "\n";
 

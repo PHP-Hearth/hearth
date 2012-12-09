@@ -83,6 +83,43 @@ class Resolver
         );
     }
 
+    public function index()
+    {
+        $index = $this->_indexConfig($this->getInitialYmlPath());
+
+        $this->_displayIndex($index);
+    }
+
+    protected function _displayIndex(array $index, $namespace = '')
+    {
+        if (isset($index['targets'])) {
+            $files = glob($namespace . $index['targets'] . '/*.php');
+            foreach ($files as $file) {
+                echo $namespace . basename($file, '.php') . "\n";
+            }
+        }
+
+        if(isset($index['children']) && is_array($index['children']))
+        foreach ($index['children'] as $child => $value) {
+            $this->_displayIndex($value, $namespace . $child . '/');
+        }
+
+        return $this;
+    }
+
+    protected function _indexConfig($config)
+    {
+        $config = $this->_loadConfigFile($config);
+        $targets['targets'] = $config['targets'];
+
+        if(is_array($config['children']))
+        foreach ($config['children'] as $childName => $childConfigPath) {
+            $targets['children'][$childName] = $this->_indexConfig($childConfigPath);
+        }
+
+        return $targets;
+    }
+
     public function setInitialYmlPath($path)
     {
         if (!is_string($path)) {
