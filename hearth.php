@@ -38,10 +38,10 @@ $core->setOutputProcessor($outputProcessor)
 
 try {
 
-    $core->main();
+    $core->main()->close();
 
 } catch(\Hearth\Exception\BuildException $e) {
 
-    $core->failBuild($e);
+    $core->failBuild($e)->close();
     
 }
