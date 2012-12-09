@@ -1,6 +1,4 @@
 {
 	"require": {
-		"symfony/yaml": "2.1.x-dev",
-		"phpunit/php-file-iterator": "dev-master"
-	}
+		"symfony/yaml": "2.1.x-dev"	}
 }

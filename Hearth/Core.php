@@ -85,7 +85,25 @@ class Core
             'children'   => array(),
         );
 
-        // Load all the f
+        // Load all the Targets Available
+        if (file_exists($path.$element->targetPath)) {
+            //get all image files with a .jpg extension.
+            $targets = glob($path.$element->targetPath . "/*.php");
+
+            foreach ($targets as $target) {
+                $element->targets[] = substr(basename($target), 0, -4);
+            }
+        }
+
+        // Load all the Tasks Available
+        if (file_exists($path.$element->taskPath)) {
+            //get all image files with a .jpg extension.
+            $tasks = glob($path.$element->taskPath . "/*.php");
+
+            foreach ($tasks as $task) {
+                $element->tasks[] = substr(basename($task), 0, -4);
+            }
+        }
 
         // Load any child Hearth configs
         if (property_exists($configData, 'children')) {
@@ -176,47 +194,5 @@ class Core
         }
 
         return $this->_configName;
-    }
-
-    
-    /**
-     * Execute a Hearth Target
-     *
-     * @param string $target Target name
-     *
-     * @access public
-     * @return \Hearth\Core
-     */
-    public function run($target)
-    {
-        $this->_buildTargetIndex(getcwd());
-        $target = $this->_loadTarget($target);
-        return $this;
-    }
-    
-    /**
-     * Load a Target Class
-     *
-     * Requires a class file based on the value of $target.
-     * The value of $target should be the fully qualified
-     * namespace of the Target class you wish to load.
-     *
-     * Ex.
-     * $target = /path/to/some/bundle/Targets/MyTarget
-     *
-     * This will attempt to load the file:
-     * /path/to/some/bundle/Targets/MyTarget.php
-     *
-     * Then it will create a new instance of:
-     * \
-     * 
-     * @param string $target /path/to/Target/SomeTarget
-     *
-     * @access protected
-     * @return mixed Value.
-     */
-    protected function _loadTarget($target)
-    {
-        
     }
 }
