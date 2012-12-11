@@ -25,10 +25,10 @@ use Hearth\Target\Resolver;
 class Core
 {
     /**
-     * @var string The directory separator to use 
+     * @var string The directory separator to use
      */
     protected $_ds;
-    
+
     /**
      * @var boolean Wheather or not the build is marked as failed
      */
@@ -57,7 +57,7 @@ class Core
 
     /**
      * Set an output processor
-     * 
+     *
      * @param \Output $outputProcessor
      *
      * @access public
@@ -69,10 +69,10 @@ class Core
 
         return $this;
     }
-    
+
     /**
      * Retrieve an output processor object
-     * 
+     *
      * @access public
      * @return \Hearth\Console\Output
      */
@@ -89,7 +89,7 @@ class Core
 
     /**
      * Primary procedure
-     * 
+     *
      * @access public
      * @return void
      */
@@ -100,7 +100,7 @@ class Core
         $initialYml    = '.hearth.yml';
         $time          = microtime();
         $format        = new Format();
-        
+
         $format->setForeground('green');
         $this->getOutputProcessor()->printLine(
             'Hearth Build: ' . getcwd() . $this->getDs() . $initialYml,
@@ -111,12 +111,12 @@ class Core
         $resolver->setDs($this->getDs())
                  ->setOutputProcessor($this->getOutputProcessor())
                  ->setInitialYmlPath($initialYml);
-        
+
         if ($argumentCount === 1) {
             $resolver->index();
             return $this;
         }
-        
+
         $targetArgs = explode('/', $args[1]);
         $resolver->lookup($targetArgs);
 
@@ -126,13 +126,13 @@ class Core
         $target = new $targetName();
 
         $target->main();
-        
+
         $this->getOutputProcessor()->printLn('');
         $this->getOutputProcessor()->printLine(
             'Build Successful!',
             $format
         );
-        
+
         $timeDiff = microtime() - $time;
         $this->getOutputProcessor()->printLine(
             'Build execution time: ' . $timeDiff . 's',
@@ -220,12 +220,12 @@ class Core
 
         return $this;
     }
-    
+
     /**
      * setDs
-     * 
+     *
      * Sets the application directory separator to use
-     * 
+     *
      * @access public
      * @param string $char The directory separator to use
      * @return \Hearth\Core
@@ -237,17 +237,17 @@ class Core
                 'Unexpected ' . gettype($char) . '. Expected a string'
             );
         }
-        
+
         $this->_ds = $char;
-        
+
         return $this;
     }
-    
+
     /**
      * getDs
-     * 
+     *
      * Gets the application directory separator to use
-     * 
+     *
      * @access public
      * @return string
      */
@@ -258,7 +258,7 @@ class Core
                 'No directory separator was set!'
             );
         }
-        
+
         return $this->_ds;
     }
 

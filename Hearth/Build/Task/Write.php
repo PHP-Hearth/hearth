@@ -3,7 +3,7 @@
  * Chmod.php
  *
  * Description of Chmod.php
- * 
+ *
  * @category Hearth
  * @package Tasks
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
@@ -19,15 +19,15 @@ use Hearth\Task as TaskInterface;
 
 class Write implements TaskInterface
 {
-	protected $_string = '';
+    protected $_string = '';
 
-	public function main()
-	{
-		echo $this->_string . "\r\n";
-	}
+    public function main()
+    {
+        echo $this->_string . "\r\n";
+    }
 
-	public function setText($string)
-	{
-		$this->_string = $string;
-	}
+    public function setText($string)
+    {
+        $this->_string = $string;
+    }
 }

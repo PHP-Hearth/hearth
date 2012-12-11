@@ -3,7 +3,7 @@
  * Resolver.php
  *
  * Description of Resolver.php
- * 
+ *
  * @category Hearth
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  * @version 0.0.0
@@ -27,7 +27,7 @@ use Symfony\Component\Yaml\Yaml;
 class Resolver
 {
     protected $_ds;
-    
+
     protected $_initialYmlPath;
 
     protected $_targetName;
@@ -94,7 +94,7 @@ class Resolver
     {
         $this->getOutputProcessor()->printLn("Available Targets");
         $this->getOutputProcessor()->printLn("-----------------");
-        
+
         $index = $this->_indexConfig($this->getInitialYmlPath());
 
         $this->_displayIndex($index);
@@ -104,7 +104,7 @@ class Resolver
     {
         if (isset($index['targets'])) {
             $files = glob(
-                preg_replace('#/#', $this->getDs(), $namespace) 
+                preg_replace('#/#', $this->getDs(), $namespace)
                 . $index['targets'] . $this->getDs() . '*.php'
             );
             foreach ($files as $file) {
@@ -195,12 +195,12 @@ class Resolver
     {
         return $this->_lastChildTargetsPath;
     }
-    
+
     /**
      * setDs
-     * 
+     *
      * Sets the application directory separator to use
-     * 
+     *
      * @access public
      * @param string $char The directory separator to use
      * @return \Hearth\Core
@@ -212,17 +212,17 @@ class Resolver
                 'Unexpected ' . gettype($char) . '. Expected a string'
             );
         }
-        
+
         $this->_ds = $char;
-        
+
         return $this;
     }
-    
+
     /**
      * getDs
-     * 
+     *
      * Gets the application directory separator to use
-     * 
+     *
      * @access public
      * @return string
      */
@@ -233,7 +233,7 @@ class Resolver
                 'No directory separator was set!'
             );
         }
-        
+
         return $this->_ds;
     }
 
@@ -245,10 +245,10 @@ class Resolver
 
         return $className;
     }
-    
+
     /**
      * Set an output processor
-     * 
+     *
      * @param \Output $outputProcessor
      *
      * @access public
@@ -260,10 +260,10 @@ class Resolver
 
         return $this;
     }
-    
+
     /**
      * Retrieve an output processor object
-     * 
+     *
      * @access public
      * @return \Hearth\Console\Output
      */

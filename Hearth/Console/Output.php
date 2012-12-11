@@ -29,7 +29,7 @@ use \Hearth\Ansi\Format;
 class Output implements \Hearth\Console\Output\OutputInterface
 {
     /**
-     * @var \Hearth\Ansi\Format The format output sequence to use 
+     * @var \Hearth\Ansi\Format The format output sequence to use
      */
     protected $_format;
 
@@ -44,20 +44,20 @@ class Output implements \Hearth\Console\Output\OutputInterface
      * @return \Hearth\Console\Output
      */
     public function printLine($string, $settings = null)
-	{
-		$format = $this->getFormat($settings);
-        
-		echo $format->getSequence() . $string . "\n" . $format->clear();
-        
-		return $this;
-	}
-    
+    {
+        $format = $this->getFormat($settings);
+
+        echo $format->getSequence() . $string . "\n" . $format->clear();
+
+        return $this;
+    }
+
     public function printLn($string) {
-		$format = $this->getFormat(null);
-        
-		echo $format->getSequence() . $string . "\n" . $format->clear();
-        
-		return $this;
+        $format = $this->getFormat(null);
+
+        echo $format->getSequence() . $string . "\n" . $format->clear();
+
+        return $this;
     }
 
     /**
@@ -70,17 +70,17 @@ class Output implements \Hearth\Console\Output\OutputInterface
      * @param array $settings
      * @return \Hearth\Console\Output
      */
-	public function dump($variable, Array $settings = null)
-	{
-		$format = $this->getFormat($settings);
+    public function dump($variable, Array $settings = null)
+    {
+        $format = $this->getFormat($settings);
 
-		echo $format->getSequence();
-		print_r($variable);
+        echo $format->getSequence();
+        print_r($variable);
         echo "\n";
-		echo $format->clear();
+        echo $format->clear();
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * getFormat
@@ -96,7 +96,7 @@ class Output implements \Hearth\Console\Output\OutputInterface
         if (!$this->_format && !isset($settings)) {
             $tmpFormat = new Format();
             $tmpFormat->setAttribute('clear');
-            
+
             return $tmpFormat;
         }
 

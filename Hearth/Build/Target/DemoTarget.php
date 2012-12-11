@@ -1,7 +1,7 @@
 <?php
 /**
  * DemoTarget.php
- * 
+ *
  * @category Hearth
  * @package Targets
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
@@ -48,5 +48,5 @@ class DemoTarget Extends Target
 
         return;
     }
-    
+
 }

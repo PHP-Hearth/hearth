@@ -3,7 +3,7 @@
  * BuildException.php
  *
  * Description of BuildException.php
- * 
+ *
  * @category Hearth
  * @package Exception
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
@@ -28,5 +28,5 @@ use Hearth\Exception as HearthException;
  */
 class BuildException extends HearthException
 {
-    
+
 }
