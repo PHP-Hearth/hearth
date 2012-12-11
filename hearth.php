@@ -1,9 +1,10 @@
+#!/usr/bin/env php
 <?php
 /**
  * hearth.php
  *
  * Core of application
- * 
+ *
  * @category Hearth
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
@@ -42,5 +43,5 @@ try {
 } catch(\Hearth\Exception\BuildException $e) {
 
     $core->failBuild($e)->close();
-    
+
 }
