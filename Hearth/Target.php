@@ -3,7 +3,7 @@
  * Target.php
  *
  * Description of Target.php
- * 
+ *
  * @category Hearth
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  * @version 0.0.0
@@ -86,13 +86,13 @@ abstract class Target
             $this->_taskRegistry,
             $task
         );
-        
+
         return $this;
     }
 
     /**
      * Execute tasks
-     * 
+     *
      * @access public
      * @return void
      */

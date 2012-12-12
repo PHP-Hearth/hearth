@@ -140,7 +140,7 @@ class Format
      */
     public function getSequence()
     {
-        $returnStr = $this->getEscape() 
+        $returnStr = $this->getEscape()
             . implode($this->getSeparator(), $this->getRegistry())
             . $this->getPostfix();
 

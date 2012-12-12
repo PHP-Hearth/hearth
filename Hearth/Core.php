@@ -14,6 +14,8 @@ namespace Hearth;
 
 use Hearth\Ansi\Format;
 use Hearth\Target\Resolver;
+use Hearth\Console\Output\OutputInterface;
+use Hearth\Exception\FileNotFound as FileNotFoundException;
 
 /**
  * Core
@@ -25,10 +27,10 @@ use Hearth\Target\Resolver;
 class Core
 {
     /**
-     * @var string The directory separator to use 
+     * @var string The directory separator to use
      */
     protected $_ds;
-    
+
     /**
      * @var boolean Wheather or not the build is marked as failed
      */
@@ -57,22 +59,22 @@ class Core
 
     /**
      * Set an output processor
-     * 
+     *
      * @param \Output $outputProcessor
      *
      * @access public
      * @return \Hearth\Core
      */
-    public function setOutputProcessor(\Hearth\Console\Output\OutputInterface $outputProcessor)
+    public function setOutputProcessor(OutputInterface $outputProcessor)
     {
         $this->_outputProcessor = $outputProcessor;
 
         return $this;
     }
-    
+
     /**
      * Retrieve an output processor object
-     * 
+     *
      * @access public
      * @return \Hearth\Console\Output
      */
@@ -89,7 +91,7 @@ class Core
 
     /**
      * Primary procedure
-     * 
+     *
      * @access public
      * @return void
      */
@@ -100,7 +102,7 @@ class Core
         $initialYml    = '.hearth.yml';
         $time          = microtime();
         $format        = new Format();
-        
+
         $format->setForeground('green');
         $this->getOutputProcessor()->printLine(
             'Hearth Build: ' . getcwd() . $this->getDs() . $initialYml,
@@ -111,28 +113,35 @@ class Core
         $resolver->setDs($this->getDs())
                  ->setOutputProcessor($this->getOutputProcessor())
                  ->setInitialYmlPath($initialYml);
-        
-        if ($argumentCount === 1) {
+
+        // If no arguments, show the listing (index)
+        if ($argumentCount === 0) {
             $resolver->index();
             return $this;
         }
-        
-        $targetArgs = explode('/', $args[1]);
+
+        $targetArgs = explode('/', $args[0]);
         $resolver->lookup($targetArgs);
 
-        require $resolver->getTargetFile();
+        $targetFile = $resolver->getTargetFile();
+
+        if (!file_exists($targetFile)) {
+            throw new FileNotFoundException("Target '" . $args[0] . "' not found.\nLooking in '" . $targetFile . "'");
+        }
+
+        require $targetFile;
 
         $targetName = $resolver->getTargetClassName();
         $target = new $targetName();
 
         $target->main();
-        
+
         $this->getOutputProcessor()->printLn('');
         $this->getOutputProcessor()->printLine(
             'Build Successful!',
             $format
         );
-        
+
         $timeDiff = microtime() - $time;
         $this->getOutputProcessor()->printLine(
             'Build execution time: ' . $timeDiff . 's',
@@ -220,12 +229,12 @@ class Core
 
         return $this;
     }
-    
+
     /**
      * setDs
-     * 
+     *
      * Sets the application directory separator to use
-     * 
+     *
      * @access public
      * @param string $char The directory separator to use
      * @return \Hearth\Core
@@ -237,17 +246,17 @@ class Core
                 'Unexpected ' . gettype($char) . '. Expected a string'
             );
         }
-        
+
         $this->_ds = $char;
-        
+
         return $this;
     }
-    
+
     /**
      * getDs
-     * 
+     *
      * Gets the application directory separator to use
-     * 
+     *
      * @access public
      * @return string
      */
@@ -258,7 +267,7 @@ class Core
                 'No directory separator was set!'
             );
         }
-        
+
         return $this->_ds;
     }
 
@@ -273,24 +282,40 @@ class Core
      */
     public function failBuild(\Hearth\Exception\BuildException $e)
     {
+        $this->displayException($e, 'Build Failed!');
+
+        $this->setFailed(true);
+
+        return $this;
+    }
+
+    /**
+     * Display an exception
+     *
+     * @param \Exception $exception Exception
+     * @param string $warningMessage Special Warning message
+     * @return \Hearth\Core
+     */
+    public function displayException(\Exception $exception, $warningMessage = 'Exception!')
+    {
         $this->getOutputProcessor()
              ->printLine(
-                 'Build Failed!',
+                 '  ' . $warningMessage . '  ',
                  array(
                      'foreground' => 'white',
                      'background' => 'red',
                      'attribute'  => 'bold',
                  )
              )
+
              ->printLine(
-                 $e->getMessage()
-                 . ' in ' . $e->getFile() . '#' . $e->getLine(),
+                 $exception->getMessage()
+                     . ' in ' . $exception->getFile()
+                     . ':' . $exception->getLine(),
                  array(
                      'foreground' => 'red',
                  )
              );
-
-        $this->setFailed(true);
 
         return $this;
     }
