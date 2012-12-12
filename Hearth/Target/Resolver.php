@@ -74,7 +74,7 @@ class Resolver
 
     public function lookup(array $targetArgs)
     {
-        $targetName =  array_pop($targetArgs);
+        $targetName = array_pop($targetArgs);
         $childQueue = $targetArgs;
 
         $lastChildYmlPath = $this->_resolveConfigPath($childQueue, $this->getInitialYmlPath());
@@ -84,7 +84,7 @@ class Resolver
 
         $this->setTargetName($targetName);
         $this->setTargetsPath(
-            dirname($lastChildYmlPath) . $this->getDs() . $lastChildYaml['targets']
+            realpath(dirname($lastChildYmlPath)) . $this->getDs() . $lastChildYaml['targets']
         );
         $this->setTargetsNamespace($namespace);
         $this->setLastChildTargetsPath($this->getDs() . $lastChildYaml['targets']);
@@ -103,10 +103,9 @@ class Resolver
     protected function _displayIndex(array $index, $namespace = '')
     {
         if (isset($index['targets'])) {
-            $files = glob(
-                preg_replace('#/#', $this->getDs(), $namespace)
-                . $index['targets'] . $this->getDs() . '*.php'
-            );
+            $path = $index['targets'] . $this->getDs() . '*.php';
+
+            $files = glob($path);
             foreach ($files as $file) {
                 $this->getOutputProcessor()->printLn(
                     '    - ' . $namespace . basename($file, '.php')
@@ -114,9 +113,10 @@ class Resolver
             }
         }
 
-        if(isset($index['children']) && is_array($index['children']))
-        foreach ($index['children'] as $child => $value) {
-            $this->_displayIndex($value, $namespace . $child . '/');
+        if (isset($index['children']) && is_array($index['children'])) {
+            foreach ($index['children'] as $child => $value) {
+                $this->_displayIndex($value, $namespace . $child . '/');
+            }
         }
 
         return $this;
@@ -124,10 +124,22 @@ class Resolver
 
     protected function _indexConfig($config)
     {
-        $config = $this->_loadConfigFile($config);
-        $targets['targets'] = $config['targets'];
+        // Get the absolute path of the config file so we can set the path to 
+        // the targets correctly
+        $path = realpath(dirname($config));
 
-        if(is_array($config['children']))
+        $config = $this->_loadConfigFile($config);
+
+        if ($config['targets'] != '') {
+            $targets['targets'] = $path . $this->getDs() . $config['targets'];
+        } else {
+            $targets['targets'] = '';
+        }
+
+        if (!is_array($config['children'])) {
+            return $targets;
+        }
+
         foreach ($config['children'] as $childName => $childConfigPath) {
             $targets['children'][$childName] = $this->_indexConfig($childConfigPath);
         }
@@ -170,7 +182,7 @@ class Resolver
 
     public function getTargetsPath()
     {
-        return $this->_targetsPath;
+        return rtrim($this->_targetsPath, $this->getDs());
     }
 
     public function getTargetsNamespace()
@@ -185,12 +197,14 @@ class Resolver
 
     public function getTargetFile()
     {
-        return $this->getTargetsPath() .$this->getDs() . $this->getTargetName() . '.php';
+        return $this->getTargetsPath() . $this->getDs() . $this->getTargetName() . '.php';
     }
+
     public function setLastChildTargetsPath($path)
     {
         $this->_lastChildTargetsPath = $path;
     }
+
     public function getLastChildTargetsPath()
     {
         return $this->_lastChildTargetsPath;

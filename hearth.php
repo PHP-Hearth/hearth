@@ -30,6 +30,9 @@ require dirname(__FILE__) . HEARTH_DS . 'vendor' . HEARTH_DS . 'autoload.php';
 
 $outputProcessor = new \Hearth\Console\Output();
 
+// Strip off the program name
+$program = array_shift($argv);
+
 $core = new \Hearth\Core();
 
 $core->setOutputProcessor($outputProcessor)
@@ -37,11 +40,9 @@ $core->setOutputProcessor($outputProcessor)
      ->setDs(HEARTH_DS);
 
 try {
-
     $core->main()->close();
-
 } catch(\Hearth\Exception\BuildException $e) {
-
     $core->failBuild($e)->close();
-
+} catch(\Exception $e) {
+    $core->displayException($e)->close();
 }

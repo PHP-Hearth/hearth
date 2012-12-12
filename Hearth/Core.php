@@ -14,6 +14,8 @@ namespace Hearth;
 
 use Hearth\Ansi\Format;
 use Hearth\Target\Resolver;
+use Hearth\Console\Output\OutputInterface;
+use Hearth\Exception\FileNotFound as FileNotFoundException;
 
 /**
  * Core
@@ -63,7 +65,7 @@ class Core
      * @access public
      * @return \Hearth\Core
      */
-    public function setOutputProcessor(\Hearth\Console\Output\OutputInterface $outputProcessor)
+    public function setOutputProcessor(OutputInterface $outputProcessor)
     {
         $this->_outputProcessor = $outputProcessor;
 
@@ -112,15 +114,22 @@ class Core
                  ->setOutputProcessor($this->getOutputProcessor())
                  ->setInitialYmlPath($initialYml);
 
-        if ($argumentCount === 1) {
+        // If no arguments, show the listing (index)
+        if ($argumentCount === 0) {
             $resolver->index();
             return $this;
         }
 
-        $targetArgs = explode('/', $args[1]);
+        $targetArgs = explode('/', $args[0]);
         $resolver->lookup($targetArgs);
 
-        require $resolver->getTargetFile();
+        $targetFile = $resolver->getTargetFile();
+
+        if (!file_exists($targetFile)) {
+            throw new FileNotFoundException("Target '" . $args[0] . "' not found.\nLooking in '" . $targetFile . "'");
+        }
+
+        require $targetFile;
 
         $targetName = $resolver->getTargetClassName();
         $target = new $targetName();
@@ -273,24 +282,40 @@ class Core
      */
     public function failBuild(\Hearth\Exception\BuildException $e)
     {
+        $this->displayException($e, 'Build Failed!');
+
+        $this->setFailed(true);
+
+        return $this;
+    }
+
+    /**
+     * Display an exception
+     *
+     * @param \Exception $exception Exception
+     * @param string $warningMessage Special Warning message
+     * @return \Hearth\Core
+     */
+    public function displayException(\Exception $exception, $warningMessage = 'Exception!')
+    {
         $this->getOutputProcessor()
              ->printLine(
-                 'Build Failed!',
+                 '  ' . $warningMessage . '  ',
                  array(
                      'foreground' => 'white',
                      'background' => 'red',
                      'attribute'  => 'bold',
                  )
              )
+
              ->printLine(
-                 $e->getMessage()
-                 . ' in ' . $e->getFile() . '#' . $e->getLine(),
+                 $exception->getMessage()
+                     . ' in ' . $exception->getFile()
+                     . ':' . $exception->getLine(),
                  array(
                      'foreground' => 'red',
                  )
              );
-
-        $this->setFailed(true);
 
         return $this;
     }

@@ -52,7 +52,8 @@ class Output implements \Hearth\Console\Output\OutputInterface
         return $this;
     }
 
-    public function printLn($string) {
+    public function printLn($string)
+    {
         $format = $this->getFormat(null);
 
         echo $format->getSequence() . $string . "\n" . $format->clear();
