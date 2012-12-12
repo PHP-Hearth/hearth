@@ -3,7 +3,7 @@
  * Chmod.php
  *
  * Description of Chmod.php
- * 
+ *
  * @category Hearth
  * @package Tasks
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
@@ -40,9 +40,9 @@ class Chmod implements Task
 
     /**
      * main
-     * 
+     *
      * Description of main
-     * 
+     *
      * @access public
      * @return void
      */
