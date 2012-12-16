@@ -1,5 +1,4 @@
 namespace:
 targets:
-tasks:
 children:
   Hearth: Hearth/.hearth.yml
