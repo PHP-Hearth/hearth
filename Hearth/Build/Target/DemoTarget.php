@@ -32,19 +32,7 @@ class DemoTarget Extends Target
      */
     public function main()
     {
-
-        echo "Hello World\n"; return;
-        // Define and add the Write task to the target
-        $write = new \Hearth\Task\Write();
-
-        // Could have defined $write here too....
-        // Ex:
-        // $write->setText('Hello World.');
-        // $this->addTask($write);
-
-        $this->addTask($write)->setText('Hello World.');
-
-        $this->execute();
+        echo "Hello World\n";
 
         return;
     }
