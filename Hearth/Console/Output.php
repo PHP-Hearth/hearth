@@ -20,21 +20,22 @@ use \Hearth\Ansi\Format;
 /**
  * Output
  *
- * Console output library
+ * Outputter class. Handles commands for the console output, rather than
+ * printing the output directly, use this class.
+ * Class currently is adapting the Qi_Console_Terminal class in order to meet
+ * the OutputInterface used in the application. This could be swapped out to use
+ * any other library in the future, still using this or another class.
  *
  * @category Hearth
  * @package Console
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
+ * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
-class Output implements \Hearth\Console\Output\OutputInterface
+class Output extends \Qi_Console_Terminal
+    implements \Hearth\Console\Output\OutputInterface
 {
     /**
-     * @var \Hearth\Ansi\Format The format output sequence to use
-     */
-    protected $_format;
-
-    /**
-     * printLine
+     * printLn
      *
      * Outputs a single line to the console
      *
@@ -43,109 +44,71 @@ class Output implements \Hearth\Console\Output\OutputInterface
      * @param array $settings
      * @return \Hearth\Console\Output
      */
-    public function printLine($string, $settings = null)
-    {
-        $format = $this->getFormat($settings);
-
-        echo $format->getSequence() . $string . "\n" . $format->clear();
-
-        return $this;
-    }
-
     public function printLn($string)
     {
-        $format = $this->getFormat(null);
-
-        echo $format->getSequence() . $string . "\n" . $format->clear();
+        $this->printterm($string . "\r\n");
 
         return $this;
     }
 
     /**
-     * dump
+     * fgColor
      *
-     * Dumps a variable to the output
+     * Sets the foreground color of the output if available
      *
      * @access public
-     * @param mixed $variable the variable to dump
-     * @param array $settings
+     * @param int $color
      * @return \Hearth\Console\Output
      */
-    public function dump($variable, Array $settings = null)
+    public function fgColor($color)
     {
-        $format = $this->getFormat($settings);
-
-        echo $format->getSequence();
-        print_r($variable);
-        echo "\n";
-        echo $format->clear();
+        $this->set_fgcolor($color);
 
         return $this;
     }
 
     /**
-     * getFormat
+     * bgColor
      *
-     * Gets the format object to use
-     *
-     * @access public
-     * @param array $settings
-     * @return \Hearth\Ansi\Format
-     */
-    public function getFormat($settings = null)
-    {
-        if (!$this->_format && !isset($settings)) {
-            $tmpFormat = new Format();
-            $tmpFormat->setAttribute('clear');
-
-            return $tmpFormat;
-        }
-
-        if (!isset($settings)) {
-            return $this->_format;
-        }
-
-        if ($settings instanceof Format) {
-            return $settings;
-        }
-
-        $tmpFormat = new Format();
-        foreach ($settings as $setting => $value) {
-            $methodName = 'set' . ucfirst($setting);
-
-            $tmpFormat->$methodName($value);
-        }
-
-        return $tmpFormat;
-    }
-
-    /**
-     * setFormat
-     *
-     * Sets the default format to use
+     * Sets the background color of the output if available
      *
      * @access public
-     * @param \Hearth\Ansi\Format $format
+     * @param int $color
      * @return \Hearth\Console\Output
      */
-    public function setFormat(Format $format = null)
+    public function bgColor($color)
     {
-        $this->_format = $format;
+        $this->set_bgcolor($color);
 
         return $this;
     }
 
     /**
-     * resetFormat
+     * reset
      *
-     * Resets the default format to use on outputs
+     * Resets the output formatting to defaults
      *
      * @access public
      * @return \Hearth\Console\Output
      */
-    public function resetFormat()
+    public function reset()
     {
-        unset($this->_format);
+        $this->sgr0();
+
+        return $this;
+    }
+
+    /**
+     * intense
+     *
+     * Sets the output formatting intensity
+     *
+     * @access public
+     * @return \Hearth\Console\Output
+     */
+    public function intense()
+    {
+        $this->bold_type();
 
         return $this;
     }

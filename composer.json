@@ -1,4 +1,12 @@
 {
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "http://github.com/sumpygump/qi-console"
+        }
+    ],
 	"require": {
-		"symfony/yaml": "2.1.x-dev"	}
+		"symfony/yaml": "2.1.x-dev",
+        "sumpygump/qi-console": "dev-master"
+    }
 }
