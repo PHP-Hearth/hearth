@@ -27,11 +27,6 @@ use Hearth\Exception\FileNotFound as FileNotFoundException;
 class Core
 {
     /**
-     * @var string The directory separator to use
-     */
-    protected $_ds;
-
-    /**
      * @var boolean Wheather or not the build is marked as failed
      */
     protected $_failed = false;
@@ -105,13 +100,12 @@ class Core
 
         $format->setForeground('green');
         $this->getOutputProcessor()->printLine(
-            'Hearth Build: ' . getcwd() . $this->getDs() . $initialYml,
+            'Hearth Build: ' . getcwd() . DIRECTORY_SEPARATOR . $initialYml,
             $format
         );
 
         $resolver = new Resolver();
-        $resolver->setDs($this->getDs())
-                 ->setOutputProcessor($this->getOutputProcessor())
+        $resolver->setOutputProcessor($this->getOutputProcessor())
                  ->setInitialYmlPath($initialYml);
 
         // If no arguments, show the listing (index)
@@ -228,47 +222,6 @@ class Core
         $this->_failed = $status;
 
         return $this;
-    }
-
-    /**
-     * setDs
-     *
-     * Sets the application directory separator to use
-     *
-     * @access public
-     * @param string $char The directory separator to use
-     * @return \Hearth\Core
-     */
-    public function setDs($char)
-    {
-        if (!is_string($char)) {
-            throw new \InvalidArgumentException(
-                'Unexpected ' . gettype($char) . '. Expected a string'
-            );
-        }
-
-        $this->_ds = $char;
-
-        return $this;
-    }
-
-    /**
-     * getDs
-     *
-     * Gets the application directory separator to use
-     *
-     * @access public
-     * @return string
-     */
-    public function getDs()
-    {
-        if (!isset($this->_ds)) {
-            throw new \UnexpectedValueException(
-                'No directory separator was set!'
-            );
-        }
-
-        return $this->_ds;
     }
 
     /**

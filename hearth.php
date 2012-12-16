@@ -14,19 +14,19 @@
  *          Some Rights Reserved
  */
 
-define('HEARTH_DS', '/');
 
-require dirname(__FILE__) . HEARTH_DS . 'Hearth' . HEARTH_DS . 'Autoload.php';
+require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Hearth' 
+    . DIRECTORY_SEPARATOR. 'Autoload.php';
 
 $autoloader = new \Hearth\Autoload();
 
-$autoloader->setDs(HEARTH_DS)
-           ->setBasePath(dirname(__FILE__));
+$autoloader->setBasePath(dirname(__FILE__));
 
 spl_autoload_register(array($autoloader, 'load'));
 
 // Autoload Composer libraries
-require dirname(__FILE__) . HEARTH_DS . 'vendor' . HEARTH_DS . 'autoload.php';
+require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'vendor' 
+    . DIRECTORY_SEPARATOR . 'autoload.php';
 
 $outputProcessor = new \Hearth\Console\Output();
 
@@ -36,8 +36,7 @@ $program = array_shift($argv);
 $core = new \Hearth\Core();
 
 $core->setOutputProcessor($outputProcessor)
-     ->setArgs($argv)
-     ->setDs(HEARTH_DS);
+     ->setArgs($argv);
 
 try {
     $core->main()->close();
