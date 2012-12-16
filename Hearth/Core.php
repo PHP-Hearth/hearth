@@ -6,8 +6,11 @@
  *
  * @category Hearth
  * @package Core
- * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
+ * @version 0.0.0
+ * @license http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
+ *          Attribution-NonCommercial-ShareAlike 3.0 Unported
+ *          Some Rights Reserved
  */
 
 namespace Hearth;
@@ -23,6 +26,7 @@ use Hearth\Exception\FileNotFound as FileNotFoundException;
  * @category Hearth
  * @package Core
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
+ * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
 class Core
 {
@@ -245,6 +249,7 @@ class Core
     /**
      * Display an exception
      *
+     * @access public
      * @param \Exception $exception Exception
      * @param string $warningMessage Special Warning message
      * @return \Hearth\Core
