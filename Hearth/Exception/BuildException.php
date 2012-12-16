@@ -2,7 +2,7 @@
 /**
  * BuildException.php
  *
- * Description of BuildException.php
+ * Build Exception
  *
  * @category Hearth
  * @package Exception
@@ -20,7 +20,8 @@ use Hearth\Exception as HearthException;
 /**
  * BuildException
  *
- * Description of BuildException
+ * Build exceptions, use or extend this exception class to throw any errors
+ * related to the application task / build process.
  *
  * @category Hearth
  * @package Exception

@@ -2,6 +2,8 @@
 /**
  * InvalidTargetLocation.php
  *
+ * Invalid Target Location Exception
+ *
  * @category Hearth
  * @package Exception
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
@@ -17,6 +19,8 @@ use Hearth\Exception as HearthException;
 
 /**
  * InvalidTargetLocation
+ *
+ * Invalid target location, used when hearth cannot find an expected target
  *
  * @category Hearth
  * @package Exception
