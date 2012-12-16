@@ -2,8 +2,6 @@
 /**
  * Target.php
  *
- * Description of Target.php
- *
  * @category Hearth
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  * @version 0.0.0
@@ -17,7 +15,7 @@ namespace Hearth;
 /**
  * Target
  *
- * Description of Target
+ * Target class abstraction for all hearth targets to extend
  *
  * @category Hearth
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>

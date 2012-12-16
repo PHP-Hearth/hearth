@@ -15,9 +15,11 @@ namespace Hearth;
 /**
  * Exception
  *
+ * Generic exception class for Hearth internals to use
+ *
  * @category Hearth
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
- * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
+ * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
 class Exception extends \Exception
 {
