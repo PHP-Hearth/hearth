@@ -96,16 +96,17 @@ class Core
         $argumentCount = count($args);
         $initialYml    = '.hearth.yml';
         $time          = microtime();
-        $format        = new Format();
+        $out           = $this->getOutputProcessor();
 
-        $format->setForeground('green');
-        $this->getOutputProcessor()->printLine(
-            'Hearth Build: ' . getcwd() . DIRECTORY_SEPARATOR . $initialYml,
-            $format
+        $out->fgColor($out::COLOR_GREEN);
+        $out->intense();
+        $out->printLn(
+            'Hearth Build: ' . getcwd() . DIRECTORY_SEPARATOR . $initialYml
         );
+        $out->reset();
 
         $resolver = new Resolver();
-        $resolver->setOutputProcessor($this->getOutputProcessor())
+        $resolver->setOutputProcessor($out)
                  ->setInitialYmlPath($initialYml);
 
         // If no arguments, show the listing (index)
@@ -130,18 +131,17 @@ class Core
 
         $target->main();
 
-        $this->getOutputProcessor()->printLn('');
-        $this->getOutputProcessor()->printLine(
-            'Build Successful!',
-            $format
-        );
+        $out->printLn('')
+            ->set_bgcolor($out::COLOR_GREEN)
+            ->set_fgcolor($out::COLOR_BLACK)
+            ->printLn('Build Successful!')
+            ->reset();
 
         $timeDiff = microtime() - $time;
-        $this->getOutputProcessor()->printLine(
-            'Build execution time: ' . $timeDiff . 's',
-            $format
+        $out->printLn(
+            'Build execution time: ' . $timeDiff . 's'
         );
-        $this->getOutputProcessor()->printLn('');
+        $out->printLn('');
 
         return $this;
     }
@@ -249,26 +249,22 @@ class Core
      * @param string $warningMessage Special Warning message
      * @return \Hearth\Core
      */
-    public function displayException(\Exception $exception, $warningMessage = 'Exception!')
-    {
-        $this->getOutputProcessor()
-             ->printLine(
-                 '  ' . $warningMessage . '  ',
-                 array(
-                     'foreground' => 'white',
-                     'background' => 'red',
-                     'attribute'  => 'bold',
-                 )
-             )
-
-             ->printLine(
-                 $exception->getMessage()
-                     . ' in ' . $exception->getFile()
-                     . ':' . $exception->getLine(),
-                 array(
-                     'foreground' => 'red',
-                 )
-             );
+    public function displayException(
+        \Exception $exception,
+        $warningMessage = 'Exception!'
+    ) {
+        $out = $this->getOutputProcessor();
+        $out->bgColor($out::COLOR_RED)
+            ->fgColor($out::COLOR_WHITE)
+            ->printLn($warningMessage)
+            ->reset()
+            ->fgColor($out::COLOR_RED)
+            ->printLn(
+                $exception->getMessage()
+                . ' in ' . $exception->getFile()
+                . ':' . $exception->getLine()
+            )
+            ->reset();
 
         return $this;
     }
