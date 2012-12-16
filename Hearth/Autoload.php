@@ -20,10 +20,6 @@ namespace Hearth;
  */
 class Autoload
 {
-    /**
-     * @var string The directory separtor to use
-     */
-    protected $_ds;
 
     /**
      * @var string The base application path to search from
@@ -41,40 +37,11 @@ class Autoload
      */
     public function load($class)
     {
-        $file = str_replace('\\', $this->getDs(), $class).'.php';
+        $file = str_replace('\\', DIRECTORY_SEPARATOR, $class).'.php';
 
-        if (file_exists($this->getBasePath() . $this->getDs() . $file)) {
-            require_once $this->getBasePath() . $this->getDs() . $file;
+        if (file_exists($this->getBasePath() . DIRECTORY_SEPARATOR . $file)) {
+            require_once $this->getBasePath() . DIRECTORY_SEPARATOR . $file;
         }
-    }
-
-    /**
-     * setDs
-     *
-     * Set the directory separator to use
-     *
-     * @access public
-     * @param string $ds The directory separator to use
-     * @return \Hearth\Autoload
-     */
-    public function setDs($ds)
-    {
-        $this->_ds = $ds;
-
-        return $this;
-    }
-
-    /**
-     * getDs
-     *
-     * Get the directory separator to use
-     *
-     * @access public
-     * @return string
-     */
-    public function getDs()
-    {
-        return $this->_ds;
     }
 
     /**
