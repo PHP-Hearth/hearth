@@ -14,7 +14,6 @@
  *          Some Rights Reserved
  */
 
-
 require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Hearth' 
     . DIRECTORY_SEPARATOR. 'Autoload.php';
 
