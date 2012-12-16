@@ -26,8 +26,6 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Resolver
 {
-    protected $_ds;
-
     protected $_initialYmlPath;
 
     protected $_targetName;
@@ -84,10 +82,13 @@ class Resolver
 
         $this->setTargetName($targetName);
         $this->setTargetsPath(
-            realpath(dirname($lastChildYmlPath)) . $this->getDs() . $lastChildYaml['targets']
+            realpath(dirname($lastChildYmlPath)) . DIRECTORY_SEPARATOR 
+            . $lastChildYaml['targets']
         );
         $this->setTargetsNamespace($namespace);
-        $this->setLastChildTargetsPath($this->getDs() . $lastChildYaml['targets']);
+        $this->setLastChildTargetsPath(
+            DIRECTORY_SEPARATOR . $lastChildYaml['targets']
+        );
     }
 
     public function index()
@@ -103,7 +104,7 @@ class Resolver
     protected function _displayIndex(array $index, $namespace = '')
     {
         if (isset($index['targets'])) {
-            $path = $index['targets'] . $this->getDs() . '*.php';
+            $path = $index['targets'] . DIRECTORY_SEPARATOR . '*.php';
 
             $files = glob($path);
             foreach ($files as $file) {
@@ -131,7 +132,7 @@ class Resolver
         $config = $this->_loadConfigFile($config);
 
         if ($config['targets'] != '') {
-            $targets['targets'] = $path . $this->getDs() . $config['targets'];
+            $targets['targets'] = $path . DIRECTORY_SEPARATOR . $config['targets'];
         } else {
             $targets['targets'] = '';
         }
@@ -182,7 +183,7 @@ class Resolver
 
     public function getTargetsPath()
     {
-        return rtrim($this->_targetsPath, $this->getDs());
+        return rtrim($this->_targetsPath, DIRECTORY_SEPARATOR);
     }
 
     public function getTargetsNamespace()
@@ -197,7 +198,8 @@ class Resolver
 
     public function getTargetFile()
     {
-        return $this->getTargetsPath() . $this->getDs() . $this->getTargetName() . '.php';
+        return $this->getTargetsPath() . DIRECTORY_SEPARATOR 
+            . $this->getTargetName() . '.php';
     }
 
     public function setLastChildTargetsPath($path)
@@ -208,47 +210,6 @@ class Resolver
     public function getLastChildTargetsPath()
     {
         return $this->_lastChildTargetsPath;
-    }
-
-    /**
-     * setDs
-     *
-     * Sets the application directory separator to use
-     *
-     * @access public
-     * @param string $char The directory separator to use
-     * @return \Hearth\Core
-     */
-    public function setDs($char)
-    {
-        if (!is_string($char)) {
-            throw new \InvalidArgumentException(
-                'Unexpected ' . gettype($char) . '. Expected a string'
-            );
-        }
-
-        $this->_ds = $char;
-
-        return $this;
-    }
-
-    /**
-     * getDs
-     *
-     * Gets the application directory separator to use
-     *
-     * @access public
-     * @return string
-     */
-    public function getDs()
-    {
-        if (!isset($this->_ds)) {
-            throw new \UnexpectedValueException(
-                'No directory separator was set!'
-            );
-        }
-
-        return $this->_ds;
     }
 
     public function getTargetClassName()
