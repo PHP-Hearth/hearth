@@ -46,6 +46,7 @@ class Output extends \Qi_Console_Terminal
      */
     public function printLn($string)
     {
+        $this->el();
         $this->printterm($string . "\r\n");
 
         return $this;
@@ -94,6 +95,8 @@ class Output extends \Qi_Console_Terminal
     public function reset()
     {
         $this->sgr0();
+        $this->op();
+        $this->el();
 
         return $this;
     }

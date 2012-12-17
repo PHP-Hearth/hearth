@@ -101,7 +101,9 @@ class Core
         $initialYml    = '.hearth.yml';
         $time          = microtime();
         $out           = $this->getOutputProcessor();
+        $targetArgs    = explode('/', $args[0]);
 
+        // Output starting message
         $out->fgColor($out::COLOR_GREEN);
         $out->intense();
         $out->printLn(
@@ -109,6 +111,7 @@ class Core
         );
         $out->reset();
 
+        // Setup target resolver
         $resolver = new Resolver();
         $resolver->setOutputProcessor($out)
                  ->setInitialYmlPath($initialYml);
@@ -119,9 +122,8 @@ class Core
             return $this;
         }
 
-        $targetArgs = explode('/', $args[0]);
+        // Resolve & lookup target
         $resolver->lookup($targetArgs);
-
         $targetFile = $resolver->getTargetFile();
 
         if (!file_exists($targetFile)) {
@@ -133,6 +135,12 @@ class Core
         $targetName = $resolver->getTargetClassName();
         $target = new $targetName();
 
+        $out->printLn('')
+            ->fgColor($out::COLOR_GREEN)
+            ->printLn('[Target] ' . $targetName)
+            ->reset();
+
+        // Run target
         $target->main();
 
         $out->printLn('')
@@ -143,9 +151,9 @@ class Core
 
         $timeDiff = microtime() - $time;
         $out->printLn(
-            'Build execution time: ' . $timeDiff . 's'
-        );
-        $out->printLn('');
+                'Build execution time: ' . $timeDiff . 's'
+            )
+            ->printLn('');
 
         return $this;
     }
@@ -259,7 +267,8 @@ class Core
         $warningMessage = 'Exception!'
     ) {
         $out = $this->getOutputProcessor();
-        $out->bgColor($out::COLOR_RED)
+        $out->printLn('')
+            ->bgColor($out::COLOR_RED)
             ->fgColor($out::COLOR_WHITE)
             ->printLn($warningMessage)
             ->reset()
