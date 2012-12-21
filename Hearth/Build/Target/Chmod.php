@@ -41,7 +41,7 @@ class Chmod Extends Target
      * the PHP "chmod" function itself
      * fails.
      */
-    const ERROR_CHMOD_OPERATION = 'Chmod operation has failed';
+    const ERROR_CHMOD_OPERATION = 'Chmod operation has failed on: ';
 
     /**
      * File
@@ -142,7 +142,7 @@ class Chmod Extends Target
     public function execute($file, $permissions)
     {
         if (!chmod($file, $permissions)) {
-            throw new BuildException(self::ERROR_CHMOD_OPERATION);
+            throw new BuildException(self::ERROR_CHMOD_OPERATION . $file);
         }
 
         return;
@@ -177,7 +177,7 @@ class Chmod Extends Target
             $subItems = array_slice(scandir($file), 2);
 
             foreach ($subItems as $item) {
-                $this->executeRecursive($item, $filePermissions, $folderPermissions);
+                $this->executeRecursive($file.DIRECTORY_SEPARATOR.$item, $filePermissions, $folderPermissions);
             }
 
             $results[] = $this->execute($file, $folderPermissions);
