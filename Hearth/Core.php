@@ -17,7 +17,6 @@ namespace Hearth;
 
 use Hearth\Ansi\Format;
 use Hearth\Target\Resolver;
-use Hearth\Console\Output\OutputInterface;
 use Hearth\Exception\FileNotFound as FileNotFoundException;
 
 /**
@@ -38,7 +37,14 @@ class Core
     /**
      * @var array The arguments given for the build script
      */
-    protected $_args = array();
+    protected $_arguments = array();
+
+    /**
+     * Target Arguments
+     *
+     * @var array
+     */
+    protected $_targetArguments = array();
 
     /**
      * Index of targets available to Hearth
@@ -49,12 +55,34 @@ class Core
     protected $_targetIndex = array();
 
     /**
-     * Output Processor cache
+     * Output Processor cached
      *
      * @var mixed
      * @access protected
      */
     protected $_outputProcessor = null;
+
+    /**
+     * Set the arguments to be passed to the Target
+     *
+     * @param array $args
+     * @return \Hearth\Core
+     */
+    public function setTargetArguments(array $args)
+    {
+        $this->_targetArguments = $args;
+        return $this;
+    }
+
+    /**
+     * Retrieve target arguments
+     *
+     * @return array
+     */
+    public function getTargetArguments()
+    {
+        return $this->_targetArguments;
+    }
 
     /**
      * Set an output processor
@@ -96,12 +124,11 @@ class Core
      */
     public function main()
     {
-        $args          = $this->getArgs();
+        $args          = $this->getArguments();
         $argumentCount = count($args);
         $initialYml    = '.hearth.yml';
         $time          = microtime();
         $out           = $this->getOutputProcessor();
-        $targetArgs    = explode('/', $args[0]);
 
         // Output starting message
         $out->fgColor($out::COLOR_GREEN);
@@ -122,12 +149,21 @@ class Core
             return $this;
         }
 
+        // Set Target arguments
+        // We know that they are present or else
+        // we would not have gotten this far
+        $this->setTargetArguments(
+            explode('/', $this->getArguments(0))
+        );
+
         // Resolve & lookup target
-        $resolver->lookup($targetArgs);
+        $resolver->lookup(
+            $this->getTargetArguments()
+        );
         $targetFile = $resolver->getTargetFile();
 
         if (!file_exists($targetFile)) {
-            throw new FileNotFoundException("Target '" . $args[0] . "' not found.\nLooking in '" . $targetFile . "'");
+            throw new FileNotFoundException("Target '" . $this->getArguments(0) . "' not found.\nLooking in '" . $targetFile . "'");
         }
 
         require $targetFile;
@@ -159,7 +195,7 @@ class Core
     }
 
     /**
-     * setArgs
+     * setArgssetArguments
      *
      * Sets the arguments given from the application call
      *
@@ -168,7 +204,7 @@ class Core
      * @return \Hearth\Core
      * @throws \InvalidArgumentException
      */
-    public function setArgs($args)
+    public function setArguments($args)
     {
         if (!is_array($args)) {
             throw new \InvalidArgumentException(
@@ -182,14 +218,14 @@ class Core
     }
 
     /**
-     * getArgs
+     * getArguments
      *
      * Gets the arguments given from the application call
      *
      * @access public
      * @return array
      */
-    public function getArgs($index = null)
+    public function getArguments($index = null)
     {
         if (!is_null($index) && !array_key_exists($index, $this->_args)) {
             throw new \InvalidArgumentException(
