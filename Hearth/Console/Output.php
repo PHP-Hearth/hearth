@@ -15,8 +15,6 @@
 
 namespace Hearth\Console;
 
-use \Hearth\Ansi\Format;
-
 /**
  * Output
  *
