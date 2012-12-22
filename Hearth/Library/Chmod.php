@@ -3,7 +3,7 @@
  * Chmod.php
  *
  * @category Hearth
- * @package Targets
+ * @package Libraries
  * @author Douglas Linsmeyer <douglinsmeyer@gmail.com>
  * @version 0.0.0
  * @license http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
@@ -11,9 +11,8 @@
  *          Some Rights Reserved
  */
 
-namespace Hearth\Build\Target;
+namespace Hearth\Library;
 
-use Hearth\Target;
 use Hearth\Exception\FileNotFound as FileNotFoundException;
 use Hearth\Exception\BuildException as BuildException;
 
@@ -24,10 +23,10 @@ use Hearth\Exception\BuildException as BuildException;
  * unix chmod operations.
  *
  * @category Hearth
- * @package Targets
+ * @package Libraries
  * @author Douglas Linsmeyer <douglinsmeyer@gmail.com>
  */
-class Chmod Extends Target
+class Chmod
 {
     /**
      * Define message to display if
@@ -65,12 +64,24 @@ class Chmod Extends Target
     protected $_folderPermissions = null;
 
     /**
+     * Recursive operation indicator
      *
      * @var boolean
      */
     protected $_recursive = false;
 
+    /**
+     * Count of files affected
+     *
+     * @var integer
+     */
     protected $_fileCount = 0;
+
+    /**
+     * Count of folders afected
+     *
+     * @var integer
+     */
     protected $_folderCount = 0;
 
     /**
@@ -106,7 +117,7 @@ class Chmod Extends Target
      * @throws \Hearth\Exception\BuildException
      * @return void
      */
-    public function main()
+    public function execute()
     {
         if (!$this->validate()) {
             throw new BuildException(self::ERROR_INVALID_PARAMETERS);
@@ -134,12 +145,12 @@ class Chmod Extends Target
     /**
      * Perform actual chmod operation
      *
-     * @access public
+     * @access protected
      * @param string $file Filename, path/to/some/file.php
      * @throws \Hearth\Exception\BuildException
      * @return boolean
      */
-    public function execute($file, $permissions)
+    protected function _execute($file, $permissions)
     {
         if (!chmod($file, $permissions)) {
             throw new BuildException(self::ERROR_CHMOD_OPERATION . $file);
@@ -157,7 +168,7 @@ class Chmod Extends Target
             $this->_fileCount++;
         }
 
-        return $this->execute($file, $permissions);
+        return $this->_execute($file, $permissions);
     }
 
     /**
@@ -180,11 +191,11 @@ class Chmod Extends Target
                 $this->executeRecursive($file.DIRECTORY_SEPARATOR.$item, $filePermissions, $folderPermissions);
             }
 
-            $results[] = $this->execute($file, $folderPermissions);
+            $results[] = $this->_execute($file, $folderPermissions);
             $this->_folderCount++;
         }
         else {
-            $results[] = $this->execute($file, $filePermissions);
+            $results[] = $this->_execute($file, $filePermissions);
             $this->_fileCount++;
         }
     }
