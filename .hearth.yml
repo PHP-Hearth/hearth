@@ -1,0 +1,4 @@
+namespace:
+targets:
+children:
+  Hearth: Hearth/.hearth.yml

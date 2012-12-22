@@ -1,0 +1,4 @@
+logs/
+vendor/
+composer.lock
+composer.phar

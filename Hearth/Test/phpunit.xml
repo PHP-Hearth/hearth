@@ -1,0 +1,18 @@
+<phpunit bootstrap="./bootstrap.php" colors="true">
+    <testsuite name="Application Test Suite">
+        <directory>./Hearth</directory>
+    </testsuite>
+
+    <logging>
+      <log type="junit" target="./../../logs/logfile.xml" logIncompleteSkipped="false"/>
+    </logging>
+
+    <filter>
+        <!-- If Zend Framework is inside your project's library, uncomment this filter -->
+
+        <whitelist>
+            <directory suffix=".php">../</directory>
+        </whitelist>
+
+    </filter>
+</phpunit>
