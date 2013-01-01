@@ -18,6 +18,7 @@ namespace Hearth;
 use Hearth\Ansi\Format;
 use Hearth\Target\Resolver;
 use Hearth\Exception\FileNotFound as FileNotFoundException;
+use Hearth\Console\Output\OutputInterface as OutputInterface;
 
 /**
  * Core
