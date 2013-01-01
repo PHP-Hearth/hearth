@@ -1,0 +1,4 @@
+namespace:
+targets:
+children:
+  TestChild: test/.hearth.yml

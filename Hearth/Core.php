@@ -101,7 +101,6 @@ class Core
         $initialYml    = '.hearth.yml';
         $time          = microtime();
         $out           = $this->getOutputProcessor();
-        $targetArgs    = explode('/', $args[0]);
 
         // Output starting message
         $out->fgColor($out::COLOR_GREEN);
@@ -123,6 +122,7 @@ class Core
         }
 
         // Resolve & lookup target
+        $targetArgs = explode('/', $args[0]);
         $resolver->lookup($targetArgs);
         $targetFile = $resolver->getTargetFile();
 
