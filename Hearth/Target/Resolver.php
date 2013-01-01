@@ -14,8 +14,9 @@
 
 namespace Hearth\Target;
 
-use Symfony\Component\Yaml\Yaml;
 use Hearth\Console\Output\OutputInterface;
+
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Resolver
@@ -31,6 +32,11 @@ class Resolver
      * @var string The initial yaml file to start from
      */
     protected $_initialYmlPath;
+
+    /**
+     * @var string The base path of the base configuration file to resolve
+     */
+    protected $_resolveBasePath;
 
     /**
      * @var string The resolved target name
@@ -62,6 +68,7 @@ class Resolver
      * @return array
      */
     protected function _loadConfigFile($file) {
+        $file = $this->_resolveBasePath . DIRECTORY_SEPARATOR . $file;
         if (!file_exists($file)) {
             throw new \Hearth\Exception\FileNotFound(
                 "Unable to find configuration file: {$file}"
@@ -85,9 +92,10 @@ class Resolver
      */
     protected function _resolveConfigPath($queue, $initial)
     {
-        $path = $initial;
+        $this->_resolveBasePath = dirname($initial);
+        $path = basename($initial);
 
-        for ($yml = $this->_loadConfigFile($initial);
+        for ($yml = $this->_loadConfigFile($path);
             count($queue) > 0;
             $yml = $this->_loadConfigFile($path)) {
 
@@ -467,4 +475,15 @@ class Resolver
 
         return $this->_outputProcessor;
     }
+
+    public function get_resolveBasePath()
+    {
+        return $this->_resolveBasePath;
+    }
+
+    public function set_resolveBasePath($_resolveBasePath)
+    {
+        $this->_resolveBasePath = $_resolveBasePath;
+    }
+
 }

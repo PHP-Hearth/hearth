@@ -11,7 +11,11 @@
  *          Some Rights Reserved
  */
 
+namespace Hearth\Test\Hearth;
+
 use Hearth\Core;
+
+use PHPUnit_Framework_TestCase as Test;
 
 /**
  * CoreTest
@@ -20,7 +24,7 @@ use Hearth\Core;
  * @package Test
  * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
  */
-class CoreTest extends PHPUnit_Framework_TestCase
+class CoreTest extends Test
 {
     /**
      * testGetArgs
@@ -29,12 +33,12 @@ class CoreTest extends PHPUnit_Framework_TestCase
     {
         $testCore = new Core();
 
-        $testCore->setArgs(
+        $testCore->setArguments(
             array(1 => 'test', 2 => 'abcd')
         );
 
-        $this->assertEquals('test', $testCore->getArgs(1));
-        $this->assertEquals('abcd', $testCore->getArgs(2));
+        $this->assertEquals('test', $testCore->getArguments(1));
+        $this->assertEquals('abcd', $testCore->getArguments(2));
     }
 
     /**
@@ -46,10 +50,10 @@ class CoreTest extends PHPUnit_Framework_TestCase
     {
         $testCore = new Core();
 
-        $testCore->setArgs(
+        $testCore->setArguments(
             array(1 => 'test', 2 => 'abcd')
         );
 
-        $this->assertEquals('test', $testCore->getArgs(8));
+        $this->assertEquals('test', $testCore->getArguments(8));
     }
 }

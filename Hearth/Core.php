@@ -31,6 +31,16 @@ use Hearth\Console\Output\OutputInterface as OutputInterface;
 class Core
 {
     /**
+     * @var int The exit code to use on success
+     */
+    const EXIT_SUCCESS = 0;
+
+    /**
+     * @var int The exit code to use on build failure
+     */
+    const EXIT_BUILD_FAILURE = 1;
+
+    /**
      * @var boolean Wheather or not the build is marked as failed
      */
     protected $_failed = false;
@@ -331,9 +341,9 @@ class Core
     public function close()
     {
         if ($this->getFailed()) {
-            exit(1);
+            exit(self::EXIT_BUILD_FAILURE);
         }
 
-        exit(0);
+        exit(self::EXIT_SUCCESS);
     }
 }

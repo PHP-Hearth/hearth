@@ -11,7 +11,12 @@
  *          Some Rights Reserved
  */
 
+namespace Hearth\Test\Hearth\Target;
+
 use Hearth\Target\Resolver;
+use Hearth\Test\Mock\Output;
+
+use PHPUnit_Framework_TestCase as Test;
 
 /**
  * ResolverTest
@@ -20,7 +25,7 @@ use Hearth\Target\Resolver;
  * @package Test
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
-class ResolverTest extends PHPUnit_Framework_TestCase
+class ResolverTest extends Test
 {
     /**
      * @var \Hearth\Target\Resolver 
@@ -32,16 +37,32 @@ class ResolverTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $mockOutput = new Hearth\Test\Mock\Output();
-        $testYaml   = dirname(__FILE__) . '../../Mock/config/test/.hearth.yml';
+        $mockOutput = new Output();
+        $testYaml   = dirname(__FILE__) . '/../../Mock/config/.hearth.yml';
 
         $this->resolver = new Resolver();
         $this->resolver->setOutputProcessor($mockOutput)
                        ->setInitialYmlPath($testYaml);
     }
 
-    public function testResol()
+    /**
+     * testResolverLookup
+     *
+     * Tests the resolver's lookup function
+     */
+    public function testResolverLookup()
     {
         $this->resolver->lookup(array('TestChild', 'MockTarget'));
+
+        $this->assertEquals(
+            '/Targets/MockTarget.php',
+            $this->resolver->getTargetFile()
+        );
+        $this->assertEquals(
+            '\TestNamespace\Targets\MockTarget',
+            $this->resolver->getTargetClassName()
+        );
+
+        return;
     }
 }
