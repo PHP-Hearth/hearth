@@ -152,6 +152,7 @@ class Core
         // Setup target resolver
         $resolver = new Resolver();
         $resolver->setOutputProcessor($out)
+                 ->setResolveBasePath(getcwd())
                  ->setInitialYmlPath($initialYml);
 
         // If no arguments, show the listing (index)

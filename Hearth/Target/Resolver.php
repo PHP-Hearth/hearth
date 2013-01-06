@@ -476,14 +476,26 @@ class Resolver
         return $this->_outputProcessor;
     }
 
-    public function get_resolveBasePath()
+    /**
+     * getResolveBasePath
+     *
+     * @return string The base path to load configs from
+     */
+    public function getResolveBasePath()
     {
         return $this->_resolveBasePath;
     }
 
-    public function set_resolveBasePath($_resolveBasePath)
+    /**
+     * setResolveBasePath
+     *
+     * @param string $resolveBasePath The base path to load configs from
+     * @return \Hearth\Target\Resolver
+     */
+    public function setResolveBasePath($resolveBasePath)
     {
-        $this->_resolveBasePath = $_resolveBasePath;
-    }
+        $this->_resolveBasePath = $resolveBasePath;
 
+        return $this;
+    }
 }
