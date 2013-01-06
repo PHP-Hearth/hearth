@@ -1,8 +1,6 @@
 <?php
 /**
  * CoreTest.php
- *
- * Description of CoreTest.php
  * 
  * @category Hearth
  * @package Test
@@ -13,19 +11,49 @@
  *          Some Rights Reserved
  */
 
+namespace Hearth\Test\Hearth;
+
+use Hearth\Core;
+
+use PHPUnit_Framework_TestCase as Test;
+
 /**
  * CoreTest
- *
- * Description of CoreTest
  *
  * @category Hearth
  * @package Test
  * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
  */
-class CoreTest extends PHPUnit_Framework_TestCase
+class CoreTest extends Test
 {
-    public function testNothing()
+    /**
+     * testGetArgs
+     */
+    public function testGetArgs()
     {
-        $this->assertTrue(true);
+        $testCore = new Core();
+
+        $testCore->setArguments(
+            array(1 => 'test', 2 => 'abcd')
+        );
+
+        $this->assertEquals('test', $testCore->getArguments(1));
+        $this->assertEquals('abcd', $testCore->getArguments(2));
+    }
+
+    /**
+     * testGetArgsFailure
+     *
+     * @expectedException InvalidArgumentException
+     */
+    public function testGetArgsFailure()
+    {
+        $testCore = new Core();
+
+        $testCore->setArguments(
+            array(1 => 'test', 2 => 'abcd')
+        );
+
+        $this->assertEquals('test', $testCore->getArguments(8));
     }
 }
