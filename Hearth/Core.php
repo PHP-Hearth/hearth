@@ -189,7 +189,12 @@ class Core
             ->reset();
 
         // Run target
+        ob_start();
         $target->main();
+        $targetOutput = ob_get_contents();
+        ob_end_clean();
+
+        $this->sectionedOutput($targetOutput, $resolver->getTargetName());
 
         $out->printLn('')
             ->set_bgcolor($out::COLOR_GREEN)
@@ -204,6 +209,47 @@ class Core
             ->printLn('');
 
         return $this;
+    }
+
+    /**
+     * sectionedOutput
+     *
+     * Displays a string line by line divided into sections marked by their
+     * section title and optionally indented.
+     *
+     * @access public
+     * @param string $output
+     * @param string $sectionTitle
+     * @param int $lineIndent
+     * @return void
+     */
+    public function sectionedOutput($output, $sectionTitle, $lineIndent = 1)
+    {
+        if (empty($output)) {
+            return;
+        }
+
+        if (!is_int($lineIndent)) {
+            throw new \InvalidArgumentException(
+                'Unexpected ' . gettype($lineIndent) . '. Expected an int'
+            );
+        }
+        
+        $outputLines = preg_split("/\n/", $output);
+
+        foreach ($outputLines as $line) {
+            $builtOutputString = '';
+            
+            for ($x = 0; $x < $lineIndent; $x++) {
+                $builtOutputString .= '  ';
+            }
+
+            $builtOutputString .= '[' . $sectionTitle . '] ';
+            $builtOutputString .= $line;
+            $this->getOutputProcessor()->printLn($builtOutputString);
+        }
+
+        return;
     }
 
     /**
