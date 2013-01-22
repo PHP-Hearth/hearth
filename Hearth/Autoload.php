@@ -14,6 +14,8 @@
 
 namespace Hearth;
 
+use Hearth\Autoload\Path;
+
 /**
  * Autoload
  *
@@ -25,9 +27,9 @@ namespace Hearth;
 class Autoload
 {
     /**
-     * @var string The base application path to search from
+     * @var array
      */
-    protected $_basePath;
+    private $loadPathStack = array();
 
     /**
      * load
@@ -38,41 +40,59 @@ class Autoload
      * @param string $class The class to search for
      * @return void
      */
-    public function load($class)
+    public function load($className)
     {
-        $file = str_replace('\\', DIRECTORY_SEPARATOR, $class).'.php';
+        $className = ltrim($className, '\\');
+        $fileName  = '';
+        $namespace = '';
+        $lastNsPos = strrpos($className, '\\');
+        if ($lastNsPos) {
+            $namespace = substr($className, 0, $lastNsPos);
+            $className = substr($className, $lastNsPos + 1);
+            $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+        }
+        $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 
-        if (file_exists($this->getBasePath() . DIRECTORY_SEPARATOR . $file)) {
-            require_once $this->getBasePath() . DIRECTORY_SEPARATOR . $file;
+
+        foreach ($this->getLoadPathStack() as $loadPath) {
+            $checkFile = $loadPath->getPath() . DIRECTORY_SEPARATOR . $fileName;
+            $checkFile = str_replace(
+                str_replace('\\', '/', $loadPath->getBaseExclude()),
+                '',
+                $checkFile
+            );
+
+            if(file_exists($checkFile)) {
+                require $checkFile;
+            }
         }
     }
 
     /**
-     * setBasePath
+     * Get Load Path Stack
      *
-     * Set the base of the autoloader seach
+     * Gets the stack of paths to auto load from
      *
-     * @access public
-     * @param string $path The base of the autoloader search
-     * @return \Hearth\Autoload
+     * @return array
      */
-    public function setBasePath($path)
+    public function getLoadPathStack()
     {
-        $this->_basePath = $path;
-
-        return $this;
+        return $this->loadPathStack;
     }
 
     /**
-     * getBasePath
+     * Add load path
      *
-     * Get the base path of the autoloader search
+     * Adds a path to the stack for autoloading
      *
-     * @access public
-     * @return string
+     * @param string $path The path to add to the autoloader
+     * @return \Hearth\Autoload
+     * @throws \InvalidArgumentException
      */
-    public function getBasePath()
+    public function addLoadPath(Path $path)
     {
-        return $this->_basePath;
+        array_unshift($this->loadPathStack, $path);
+
+        return $this;
     }
 }
