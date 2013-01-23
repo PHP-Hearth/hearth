@@ -15,8 +15,10 @@
 
 namespace Hearth;
 
+use Hearth\Autoload;
 use Hearth\Autoload\Path;
 use Hearth\Console\Output\OutputInterface as OutputInterface;
+use Hearth\Exception\BuildException;
 use Hearth\Exception\FileNotFound as FileNotFoundException;
 use Hearth\Target\Resolver;
 
@@ -100,7 +102,7 @@ class Core
      * @param \Hearth\Autoload $autoloader The autoloader to use
      * @return \Hearth\Core
      */
-    public function setAutoloader(\Hearth\Autoload $autoloader)
+    public function setAutoloader(Autoload $autoloader)
     {
         $this->autoloader = $autoloader;
 
@@ -216,6 +218,7 @@ class Core
 
         $targetName = $resolver->getTargetClassName();
         $target = new $targetName();
+        $target->setOutputProcessor($this->getOutputProcessor());
 
         $targetPath = new Path(
             $resolver->getLastFullLoadBasePath(),
@@ -381,7 +384,7 @@ class Core
      * @param \Hearth\Exception\BuildException $e
      * @return \Hearth\Core
      */
-    public function failBuild(\Hearth\Exception\BuildException $e)
+    public function failBuild(BuildException $e)
     {
         $this->displayException($e, 'Build Failed!');
 
