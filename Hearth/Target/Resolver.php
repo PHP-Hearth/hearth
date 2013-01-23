@@ -127,8 +127,15 @@ class Resolver
         $targetName = array_pop($targetArgs);
         $childQueue = $targetArgs;
 
-        $lastChildYmlPath = $this->resolveConfigPath($childQueue, $this->getInitialYmlPath());
-        $this->setLastFullLoadBasePath(realpath(dirname($lastChildYmlPath)));
+        $lastChildYmlPath = $this->resolveConfigPath(
+            $childQueue, $this->getInitialYmlPath()
+        );
+        $this->setLastFullLoadBasePath(
+            realpath(
+                dirname($this->getInitialYmlPath()) . DIRECTORY_SEPARATOR
+                . dirname($lastChildYmlPath)
+            )
+        );
         
         $lastChildYaml = $this->loadConfigFile($lastChildYmlPath);
 
