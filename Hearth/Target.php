@@ -23,11 +23,6 @@ namespace Hearth;
 abstract class Target
 {
     /**
-     * @var array The registry of task calls
-     */
-    private $_taskRegistry = array();
-
-    /**
      * main
      *
      * @access public
@@ -36,69 +31,68 @@ abstract class Target
     abstract public function main();
 
     /**
-     * task
+     * callTarget
      *
-     * Adds a task to the registry to be built on a target
+     * Calls a subtarget to be run inside of a Target
      *
-     * @access public
-     * @param object $task
-     * @return \Hearth\Target
-     */
-    public function addTask($task)
-    {
-        if (!is_object($task)) {
-            throw new \UnexpectedValueException(
-                'Expected an object, got a ' . gettype($task)
-            );
-        }
-        $this->addTaskToRegistry($task);
-        return $task;
-    }
-
-    /**
-     * getTaskRegistry
-     *
-     * Gets the task registry for the target
-     *
-     * @access public
-     * @return array
-     */
-    public function getTaskRegistry()
-    {
-        return $this->_taskRegistry;
-    }
-
-    /**
-     * addTaskToRegistry
-     *
-     * Adds a given task to the task registry
-     *
-     * @access public
-     * @param string $task
-     * @return \Hearth\Target
-     * @throws \InvalidArgumentException
-     */
-    public function addTaskToRegistry($task)
-    {
-        array_push(
-            $this->_taskRegistry,
-            $task
-        );
-
-        return $this;
-    }
-
-    /**
-     * Execute tasks
-     *
-     * @access public
+     * @access protected
+     * @param string $name The target class to run
      * @return void
      */
-    public function execute()
+    protected function callTarget($name)
     {
-        $tasks = $this->getTaskRegistry();
-        foreach ($tasks as $task) {
-            $task->main();
+        $namespace = implode(
+            '\\',
+            array_slice(
+                explode('\\', get_called_class()),
+                0,
+                -1
+            )
+        );
+
+        $fullClassName = '\\' . $namespace . '\\' . $name;
+        $targetClass = new $fullClassName();
+
+        if (!$targetClass instanceof Target) {
+            throw new \InvalidArgumentException(
+                'Unexpected '
+                . get_class($targetClass)
+                . '. Expected an instance of Target'
+            );
+        }
+
+        ob_start();
+        $targetClass->main();
+        $targetOutput = ob_get_clean();
+        $targetName = "JustATest";
+
+        $this->sectionedOutput($targetOutput, $targetName);
+    }
+
+    /**
+     * sectionedOutput
+     *
+     * Displays a string line by line divided into sections marked by their
+     * section title and optionally indented.
+     *
+     * @access public
+     * @param string $output
+     * @param string $sectionTitle
+     * @param int $lineIndent
+     * @return void
+     */
+    public function sectionedOutput($output, $sectionTitle)
+    {
+        if (empty($output)) {
+            return;
+        }
+
+        $outputLines = preg_split("/\n/", $output);
+
+        foreach ($outputLines as $line) {
+            $builtOutputString = '[' . $sectionTitle . '] ';
+            $builtOutputString .= $line;
+            echo $builtOutputString . "\n";
         }
 
         return;

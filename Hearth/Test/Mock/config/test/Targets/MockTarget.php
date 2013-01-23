@@ -22,6 +22,9 @@ class MockTarget extends \Hearth\Target
 {
     public function main()
     {
+        echo "It's a thing\n";
+        $this->callTarget("MockSubTarget");
+        echo "no it isn't\n";
         return;
     }
 }

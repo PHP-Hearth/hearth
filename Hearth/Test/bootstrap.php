@@ -15,9 +15,11 @@ require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
 
 $autoloader = new \Hearth\Autoload();
 
-$autoloader->setBasePath(
-    dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..'
-);
+require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
+    . '..' . DIRECTORY_SEPARATOR . 'Hearth' . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'Path.php';
+$corePath = new \Hearth\Autoload\Path(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..');
+
+$autoloader->addLoadPath($corePath);
 
 spl_autoload_register(array($autoloader, 'load'));
 
