@@ -3,6 +3,7 @@
  * Path.php
  *
  * @category Hearth
+ * @package Autoload
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  * @version 1.0.0
  * @license http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
@@ -15,8 +16,13 @@ namespace Hearth\Autoload;
 /**
  * Path
  *
+ * Path is an object that defines a system directory to look for classes when
+ * autoloading.
+ * It defines information on where to find a class, as well as the naming
+ * logic needed to properly load it.
+ *
  * @category Hearth
- * @package
+ * @package Autoload
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
 class Path

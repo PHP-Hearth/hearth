@@ -72,7 +72,7 @@ class Resolver
      * @param string $file Full path and filename to the YML file
      * @return array
      */
-    protected function _loadConfigFile($file) {
+    protected function loadConfigFile($file) {
         $file = $this->resolveBasePath . DIRECTORY_SEPARATOR . $file;
         if (!file_exists($file)) {
             throw new \Hearth\Exception\FileNotFound(
@@ -95,14 +95,14 @@ class Resolver
      * @param string $initial The path of the initial config to load from
      * @return string
      */
-    protected function _resolveConfigPath($queue, $initial)
+    protected function resolveConfigPath($queue, $initial)
     {
         $this->resolveBasePath = dirname($initial);
         $path = basename($initial);
 
-        for ($yml = $this->_loadConfigFile($path);
+        for ($yml = $this->loadConfigFile($path);
             count($queue) > 0;
-            $yml = $this->_loadConfigFile($path)) {
+            $yml = $this->loadConfigFile($path)) {
 
             $child = array_shift($queue);
 
@@ -127,10 +127,10 @@ class Resolver
         $targetName = array_pop($targetArgs);
         $childQueue = $targetArgs;
 
-        $lastChildYmlPath = $this->_resolveConfigPath($childQueue, $this->getInitialYmlPath());
+        $lastChildYmlPath = $this->resolveConfigPath($childQueue, $this->getInitialYmlPath());
         $this->setLastFullLoadBasePath(realpath(dirname($lastChildYmlPath)));
         
-        $lastChildYaml = $this->_loadConfigFile($lastChildYmlPath);
+        $lastChildYaml = $this->loadConfigFile($lastChildYmlPath);
 
         $namespace = $lastChildYaml['namespace'];
 
@@ -161,9 +161,9 @@ class Resolver
         $this->getOutputProcessor()->printLn("Available Targets");
         $this->getOutputProcessor()->printLn("-----------------");
 
-        $index = $this->_indexConfig($this->getInitialYmlPath());
+        $index = $this->indexConfig($this->getInitialYmlPath());
 
-        $this->_displayIndex($index);
+        $this->displayIndex($index);
 
         return $this;
     }
@@ -179,7 +179,7 @@ class Resolver
      * @param string $namespace The base namespace, used for recursing
      * @return \Hearth\Target\Resolver
      */
-    protected function _displayIndex(array $index, $namespace = '')
+    protected function displayIndex(array $index, $namespace = '')
     {
         if (isset($index['targets'])) {
             $path = $index['targets'] . DIRECTORY_SEPARATOR . '*.php';
@@ -194,7 +194,7 @@ class Resolver
 
         if (isset($index['children']) && is_array($index['children'])) {
             foreach ($index['children'] as $child => $value) {
-                $this->_displayIndex($value, $namespace . $child . '/');
+                $this->displayIndex($value, $namespace . $child . '/');
             }
         }
 
@@ -210,13 +210,13 @@ class Resolver
      * @param string $config the configuration file to initally load from
      * @return array
      */
-    protected function _indexConfig($config)
+    protected function indexConfig($config)
     {
         // Get the absolute path of the config file so we can set the path to 
         // the targets correctly
         $path = realpath(dirname($config));
 
-        $config = $this->_loadConfigFile($config);
+        $config = $this->loadConfigFile($config);
 
         if ($config['targets'] != '') {
             $targets['targets'] = $path . DIRECTORY_SEPARATOR . $config['targets'];
@@ -229,7 +229,7 @@ class Resolver
         }
 
         foreach ($config['children'] as $childName => $childConfigPath) {
-            $targets['children'][$childName] = $this->_indexConfig($childConfigPath);
+            $targets['children'][$childName] = $this->indexConfig($childConfigPath);
         }
 
         return $targets;
