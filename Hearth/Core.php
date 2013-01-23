@@ -218,7 +218,6 @@ class Core
 
         $targetName = $resolver->getTargetClassName();
         $target = new $targetName();
-        $target->setOutputProcessor($this->getOutputProcessor());
 
         $targetPath = new Path(
             $resolver->getLastFullLoadBasePath(),
@@ -236,10 +235,12 @@ class Core
         // Run target
         ob_start();
         $target->main();
-        $targetOutput = ob_get_contents();
-        ob_end_clean();
+        $targetOutput = ob_get_clean();
 
-        $this->sectionedOutput($targetOutput, $resolver->getTargetName());
+        $this->sectionedOutput(
+            trim($targetOutput, "\n"),
+            $resolver->getTargetName()
+        );
 
         $out->printLn('')
             ->set_bgcolor($out::COLOR_GREEN)
