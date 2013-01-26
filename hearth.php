@@ -19,7 +19,9 @@ require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Hearth'
 
 $autoloader = new \Hearth\Autoload();
 
-$autoloader->setBasePath(dirname(__FILE__));
+require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Hearth' . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'Path.php';
+$corePath = new \Hearth\Autoload\Path(dirname(__FILE__));
+$autoloader->addLoadPath($corePath);
 
 spl_autoload_register(array($autoloader, 'load'));
 
@@ -35,7 +37,8 @@ $program = array_shift($argv);
 $core = new \Hearth\Core();
 
 $core->setOutputProcessor($outputProcessor)
-     ->setArguments($argv);
+     ->setArguments($argv)
+     ->setAutoloader($autoloader);
 
 try {
     $core->main()->close();

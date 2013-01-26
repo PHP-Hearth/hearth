@@ -47,42 +47,42 @@ class Chmod
      *
      * @var string
      */
-    protected $_file = null;
+    private $file = null;
 
     /**
      * File Permissions
      *
      * @var integer
      */
-    protected $_filePermissions = null;
+    private $filePermissions = null;
 
     /**
      * Folder permissions
      *
      * @var integer
      */
-    protected $_folderPermissions = null;
+    private $folderPermissions = null;
 
     /**
      * Recursive operation indicator
      *
      * @var boolean
      */
-    protected $_recursive = false;
+    private $recursive = false;
 
     /**
      * Count of files affected
      *
      * @var integer
      */
-    protected $_fileCount = 0;
+    private $fileCount = 0;
 
     /**
      * Count of folders afected
      *
      * @var integer
      */
-    protected $_folderCount = 0;
+    private $folderCount = 0;
 
     /**
      * Initialization
@@ -137,8 +137,8 @@ class Chmod
         }
 
         return (object) array(
-            'folders' => $this->_folderCount,
-            'files'   => $this->_fileCount,
+            'folders' => $this->folderCount,
+            'files'   => $this->fileCount,
         );
     }
 
@@ -150,7 +150,7 @@ class Chmod
      * @throws \Hearth\Exception\BuildException
      * @return boolean
      */
-    protected function _execute($file, $permissions)
+    protected function execute($file, $permissions)
     {
         if (!chmod($file, $permissions)) {
             throw new BuildException(self::ERROR_CHMOD_OPERATION . $file);
@@ -162,13 +162,13 @@ class Chmod
     public function executeSingle($file, $permissions)
     {
         if (is_dir($file)) {
-            $this->_folderCount++;
+            $this->folderCount++;
         }
         else {
-            $this->_fileCount++;
+            $this->fileCount++;
         }
 
-        return $this->_execute($file, $permissions);
+        return $this->execute($file, $permissions);
     }
 
     /**
@@ -191,12 +191,12 @@ class Chmod
                 $this->executeRecursive($file.DIRECTORY_SEPARATOR.$item, $filePermissions, $folderPermissions);
             }
 
-            $results[] = $this->_execute($file, $folderPermissions);
-            $this->_folderCount++;
+            $results[] = $this->execute($file, $folderPermissions);
+            $this->folderCount++;
         }
         else {
-            $results[] = $this->_execute($file, $filePermissions);
-            $this->_fileCount++;
+            $results[] = $this->execute($file, $filePermissions);
+            $this->fileCount++;
         }
     }
 
@@ -208,13 +208,13 @@ class Chmod
      */
     public function validate()
     {
-        if (is_null($this->_file)) {
+        if (is_null($this->file)) {
             return false;
         }
-        if (is_null($this->_filePermissions)) {
+        if (is_null($this->filePermissions)) {
             return false;
         }
-        if (is_null($this->_recursive)) {
+        if (is_null($this->recursive)) {
             return false;
         }
 
@@ -250,7 +250,7 @@ class Chmod
      */
     public function setFilePermissions($permissions)
     {
-        $this->_filePermissions = $permissions;
+        $this->filePermissions = $permissions;
         return $this;
     }
 
@@ -262,10 +262,10 @@ class Chmod
      */
     public function getFilePermissions()
     {
-        if (is_null($this->_filePermissions) && !is_null($this->_folderPermissions)) {
-            $this->_filePermissions = $this->getFolderPermissions();
+        if (is_null($this->filePermissions) && !is_null($this->folderPermissions)) {
+            $this->filePermissions = $this->getFolderPermissions();
         }
-        return $this->_filePermissions;
+        return $this->filePermissions;
     }
 
     /**
@@ -280,7 +280,7 @@ class Chmod
      */
     public function setFolderPermissions($permissions)
     {
-        $this->_folderPermissions = $permissions;
+        $this->folderPermissions = $permissions;
         return $this;
     }
 
@@ -292,10 +292,10 @@ class Chmod
      */
     public function getFolderPermissions()
     {
-        if (is_null($this->_folderPermissions) && !is_null($this->_filePermissions)) {
-            $this->_folderPermissions = $this->getFilePermissions();
+        if (is_null($this->folderPermissions) && !is_null($this->filePermissions)) {
+            $this->folderPermissions = $this->getFilePermissions();
         }
-        return $this->_folderPermissions;
+        return $this->folderPermissions;
     }
 
     /**
@@ -311,7 +311,7 @@ class Chmod
             throw new FileNotFoundException($file);
         }
 
-        $this->_file = $file;
+        $this->file = $file;
         return $this;
     }
 
@@ -324,7 +324,7 @@ class Chmod
      */
     public function getFile()
     {
-        return $this->_file;
+        return $this->file;
     }
 
     /**
@@ -336,7 +336,7 @@ class Chmod
      */
     public function setRecursive($isRecursive)
     {
-        $this->_recursive = ($isRecursive) ? true : false;
+        $this->recursive = ($isRecursive) ? true : false;
         return $this;
     }
 
@@ -350,6 +350,6 @@ class Chmod
      */
     public function getRecursive()
     {
-        return $this->_recursive;
+        return $this->recursive;
     }
 }
