@@ -25,7 +25,7 @@ abstract class Task
      *
      * @return void
      */
-    public function main();
+    public abstract function main();
 
     /**
      * run a task and execute it immediately
@@ -35,10 +35,10 @@ abstract class Task
     public static function run()
     {
         $args      = func_get_args();
-        $className = get_class();
+        $className = get_called_class();
 
         $taskReflection = new \ReflectionClass($className);
-        $taskObj = $taskReflection->newInstance($args);
+        $taskObj = $taskReflection->newInstanceArgs($args);
 
         return $taskObj->main();
     }

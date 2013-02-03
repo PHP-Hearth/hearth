@@ -62,7 +62,7 @@ class Copy extends Task
      *
      * @return \Hearth\Copy
      */
-    protected function main()
+    public function main()
     {
         echo '[copy] Copying file ' . $this->getCopyFrom()
             . ' to ' . $this->getCopyTo() . PHP_EOL;
