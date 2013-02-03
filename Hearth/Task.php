@@ -18,7 +18,7 @@ namespace Hearth;
  * @category Hearth
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
-interface Task
+abstract class Task
 {
     /**
      * Execute the main task routine
@@ -26,4 +26,20 @@ interface Task
      * @return void
      */
     public function main();
+
+    /**
+     * run a task and execute it immediately
+     *
+     * @return type
+     */
+    public static function run()
+    {
+        $args      = func_get_args();
+        $className = get_class();
+
+        $taskReflection = new \ReflectionClass($className);
+        $taskObj = $taskReflection->newInstance($args);
+
+        return $taskObj->main();
+    }
 }

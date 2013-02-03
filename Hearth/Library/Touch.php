@@ -24,7 +24,7 @@ use Hearth\Task;
  * @package Library
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
-class Touch implements Task
+class Touch extends Task
 {
     /**
      * @var string The file path to touch

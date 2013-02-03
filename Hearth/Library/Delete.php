@@ -21,7 +21,7 @@ use Hearth\Task;
  * @package Library
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
-class Delete implements Task
+class Delete extends Task
 {
     /**
      * @var string The file path to be deleted
