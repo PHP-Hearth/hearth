@@ -64,7 +64,8 @@ abstract class Target
         ob_start();
         $targetClass->main();
         $targetOutput = ob_get_clean();
-        $targetName = "JustATest";
+        $classNameSegments = explode('\\', $fullClassName);
+        $targetName = end($classNameSegments);
 
         $this->sectionedOutput($targetOutput, $targetName);
     }
