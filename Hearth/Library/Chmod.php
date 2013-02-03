@@ -3,7 +3,7 @@
  * Chmod.php
  *
  * @category Hearth
- * @package Libraries
+ * @package Library
  * @author Douglas Linsmeyer <douglinsmeyer@gmail.com>
  * @version 0.0.0
  * @license http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
@@ -15,6 +15,7 @@ namespace Hearth\Library;
 
 use Hearth\Exception\FileNotFound as FileNotFoundException;
 use Hearth\Exception\BuildException as BuildException;
+use Hearth\Task;
 
 /**
  * Chmod
@@ -23,10 +24,10 @@ use Hearth\Exception\BuildException as BuildException;
  * unix chmod operations.
  *
  * @category Hearth
- * @package Libraries
+ * @package Library
  * @author Douglas Linsmeyer <douglinsmeyer@gmail.com>
  */
-class Chmod
+class Chmod implements Task
 {
     /**
      * Define message to display if
@@ -95,8 +96,11 @@ class Chmod
      * @param boolean $recursion
      * @return void
      */
-    public function __construct($file = null, $permissions = null, $recursion = null)
-    {
+    public function __construct(
+        $file = null,
+        $permissions = null,
+        $recursion = null
+    ) {
         if (!is_null($file)) {
             $this->setFile($file);
         }
@@ -117,7 +121,7 @@ class Chmod
      * @throws \Hearth\Exception\BuildException
      * @return void
      */
-    public function execute()
+    public function main()
     {
         if (!$this->validate()) {
             throw new BuildException(self::ERROR_INVALID_PARAMETERS);
@@ -179,8 +183,11 @@ class Chmod
      * @param  string $file
      * @return void
      */
-    public function executeRecursive($file, $filePermissions, $folderPermissions)
-    {
+    public function executeRecursive(
+        $file,
+        $filePermissions,
+        $folderPermissions
+    ) {
         $results = array();
 
         if (is_dir($file)) {
@@ -188,7 +195,11 @@ class Chmod
             $subItems = array_slice(scandir($file), 2);
 
             foreach ($subItems as $item) {
-                $this->executeRecursive($file.DIRECTORY_SEPARATOR.$item, $filePermissions, $folderPermissions);
+                $this->executeRecursive(
+                    $file.DIRECTORY_SEPARATOR.$item,
+                    $filePermissions,
+                    $folderPermissions
+                );
             }
 
             $results[] = $this->execute($file, $folderPermissions);
@@ -292,7 +303,10 @@ class Chmod
      */
     public function getFolderPermissions()
     {
-        if (is_null($this->folderPermissions) && !is_null($this->filePermissions)) {
+        if (
+            is_null($this->folderPermissions)
+            && !is_null($this->filePermissions)
+        ) {
             $this->folderPermissions = $this->getFilePermissions();
         }
         return $this->folderPermissions;

@@ -13,14 +13,16 @@
 
 namespace Hearth\Library;
 
+use Hearth\Task;
+
 /**
  * Copy
  *
  * @category Hearth
- * @package
+ * @package Library
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
-class Copy
+class Copy implements Task
 {
     /**
      * @var string The path to copy from
@@ -53,8 +55,6 @@ class Copy
         $this->setCopyFrom($copyFrom)
              ->setCopyTo($copyTo)
              ->setReplace($replace);
-
-        $this->main();
     }
 
     /**
@@ -64,6 +64,9 @@ class Copy
      */
     protected function main()
     {
+        echo '[copy] Copying file ' . $this->getCopyFrom()
+            . ' to ' . $this->getCopyTo() . PHP_EOL;
+        
         $fileContents = file_get_contents($this->getCopyFrom());
 
         foreach ($this->getReplace() as $replacementKey => $replacementValue) {
