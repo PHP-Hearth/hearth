@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Hearth by PHP-Hearth</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/PHP-Hearth/hearth">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/PHP-Hearth/hearth/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/PHP-Hearth/hearth/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Hearth</h1>
+          <p>PHP Command line build tool</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/PHP-Hearth">PHP-Hearth</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>Hearth</h1>
+
+<h2>A structured command line build tool built in PHP</h2>
+
+<p><a href="http://travis-ci.org/PHP-Hearth/hearth"><img src="https://secure.travis-ci.org/PHP-Hearth/hearth.png?branch=dev" alt="Build Status"></a></p>
+
+<p>Hearth is a PHP command line build tool for PHP projects. It is built with
+defined tasks and targets expressed in PHP code. You can easily extend it to
+create your own targets and tasks.</p>
+
+<p><em>Keep your PHP projects warm by the fire with Hearth.</em></p>
+
+<h2>Installation (*nix)</h2>
+
+<h3>1. Download</h3>
+
+<p>You can download Hearth from Github. It is suggested to download the files to
+a bin directory (like <code>/usr/local/bin/</code> or <code>~/bin/</code>):</p>
+
+<pre><code>$ git clone git://github.com/PHP-Hearth/hearth.git
+</code></pre>
+
+<h3>2. Run Composer Install</h3>
+
+<p>You must run Composer to download the dependencies for Hearth. See
+<a href="http://getcomposer.org/doc/00-intro.md#installation-nix">Documentation on Composer</a> for more
+information about downloading and installing composer.</p>
+
+<pre><code>$ cd hearth
+$ composer.phar install
+</code></pre>
+
+<h3>3. Symlink hearth Into Path</h3>
+
+<pre><code>$ ln -s /path/to/hearth/Hearth/hearth.php ~/bin/hearth
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>Basic usage of Hearth involves running the <code>hearth</code> command on the command line
+from your project's root directory.</p>
+
+<p>Without any arguments, Hearth will display the available targets and tasks.</p>
+
+<pre><code>$ hearth
+Hearth Build: /var/www/example-project/.hearth.yml
+Available Targets
+-----------------
+    - Hearth/DemoTarget
+</code></pre>
+
+<p>You can run a specific target by providing the name of the target (including
+the namespace):</p>
+
+<pre><code>$ hearth Hearth/DemoTarget
+Hearth Build: /var/www/example-project/.hearth.yml
+Hello World
+
+Build Successful!
+Build execution time: 0.004896s
+</code></pre>
+
+<p>This example target is merely a hello world for demonstration purposes.</p>
+
+<h3>The <code>.hearth.yml</code> Config File</h3>
+
+<p>Hearth looks for a <code>.hearth.yml</code> file in the root directory of your project.
+In this config file (YAML format) you can define the targets and tasks that
+should be run during a build.</p>
+
+<pre><code>namespace:
+targets:
+tasks:
+children:
+  Hearth: Hearth/.hearth.yml
+</code></pre>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-38298505-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
