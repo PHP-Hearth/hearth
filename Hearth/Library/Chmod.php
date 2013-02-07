@@ -27,7 +27,7 @@ use Hearth\Task;
  * @package Library
  * @author Douglas Linsmeyer <douglinsmeyer@gmail.com>
  */
-class Chmod implements Task
+class Chmod extends Task
 {
     /**
      * Define message to display if

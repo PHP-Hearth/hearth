@@ -22,7 +22,7 @@ use Hearth\Task;
  * @package Library
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
-class Copy implements Task
+class Copy extends Task
 {
     /**
      * @var string The path to copy from
@@ -62,7 +62,7 @@ class Copy implements Task
      *
      * @return \Hearth\Copy
      */
-    protected function main()
+    public function main()
     {
         echo '[copy] Copying file ' . $this->getCopyFrom()
             . ' to ' . $this->getCopyTo() . PHP_EOL;
