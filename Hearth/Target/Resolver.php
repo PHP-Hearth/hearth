@@ -139,7 +139,7 @@ class Resolver
         
         $lastChildYaml = $this->loadConfigFile($lastChildYmlPath);
 
-        $namespace = $lastChildYaml['namespace'];
+        $namespace = isset($lastChildYaml['namespace']) ? $lastChildYaml['namespace'] : null;
         $qualifiedNamespace = !empty($namespace) && $namespace[0] !== '\\' ? '\\' . $namespace : $namespace;
 
         $this->setTargetName($targetName);
@@ -232,7 +232,7 @@ class Resolver
             $targets['targets'] = '';
         }
 
-        if (!is_array($config['children'])) {
+        if (!isset($config['children']) || !is_array($config['children'])) {
             return $targets;
         }
 
