@@ -139,14 +139,15 @@ class Resolver
         
         $lastChildYaml = $this->loadConfigFile($lastChildYmlPath);
 
-        $namespace = $lastChildYaml['namespace'];
+        $namespace = isset($lastChildYaml['namespace']) ? $lastChildYaml['namespace'] : null;
+        $qualifiedNamespace = !empty($namespace) && $namespace[0] !== '\\' ? '\\' . $namespace : $namespace;
 
         $this->setTargetName($targetName);
         $this->setTargetsPath(
             realpath(dirname($lastChildYmlPath)) . DIRECTORY_SEPARATOR 
             . $lastChildYaml['targets']
         );
-        $this->setTargetsNamespace($namespace);
+        $this->setTargetsNamespace($qualifiedNamespace);
         $this->setLastChildTargetsPath(
             DIRECTORY_SEPARATOR . $lastChildYaml['targets']
         );
@@ -231,7 +232,7 @@ class Resolver
             $targets['targets'] = '';
         }
 
-        if (!is_array($config['children'])) {
+        if (!isset($config['children']) || !is_array($config['children'])) {
             return $targets;
         }
 
@@ -375,7 +376,7 @@ class Resolver
      */
     public function setTargetsNamespace($namespace)
     {
-        if (!is_string($namespace)) {
+        if (!is_string($namespace) && $namespace !== null) {
             throw new \InvalidArgumentException(
                 'Unexpected ' . gettype($namespace) . '. Expected a string'
             );
@@ -448,7 +449,7 @@ class Resolver
      */
     public function getTargetClassName()
     {
-        $className = '\\' . $this->getTargetsNamespace();
+        $className = $this->getTargetsNamespace();
         $className .= preg_replace('#/#', '\\', trim($this->getLastChildTargetsPath(), '.'));
         $className .= '\\' . $this->getTargetName();
 
