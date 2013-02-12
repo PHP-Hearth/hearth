@@ -86,11 +86,13 @@ class Core
     /**
      * Constructor
      *
-     * @param \Hearth\Request $request
+     * @param \Hearth\Request $request The request object
+     * @param \Hearth\Console\Output\OutputInterface The Output console to use
      */
-    public function __construct($request)
+    public function __construct($request, OutputInterface $outputProcessor)
     {
-        $this->setRequest($request);
+        $this->setRequest($request)
+             ->setOutputProcessor($outputProcessor);
     }
 
     /**
