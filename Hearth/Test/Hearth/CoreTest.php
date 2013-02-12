@@ -26,34 +26,10 @@ use PHPUnit_Framework_TestCase as Test;
  */
 class CoreTest extends Test
 {
-    /**
-     * testGetArgs
-     */
-    public function testGetArgs()
+    public function testNothing()
     {
-        $testCore = new Core();
-
-        $testCore->setArguments(
-            array(1 => 'test', 2 => 'abcd')
+        $this->markTestIncomplete(
+          'This test has not been implemented yet.'
         );
-
-        $this->assertEquals('test', $testCore->getArguments(1));
-        $this->assertEquals('abcd', $testCore->getArguments(2));
-    }
-
-    /**
-     * testGetArgsFailure
-     *
-     * @expectedException InvalidArgumentException
-     */
-    public function testGetArgsFailure()
-    {
-        $testCore = new Core();
-
-        $testCore->setArguments(
-            array(1 => 'test', 2 => 'abcd')
-        );
-
-        $this->assertEquals('test', $testCore->getArguments(8));
     }
 }
