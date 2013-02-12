@@ -89,10 +89,11 @@ class Core
      * @param \Hearth\Request $request The request object
      * @param \Hearth\Console\Output\OutputInterface The Output console to use
      */
-    public function __construct($request, OutputInterface $outputProcessor)
+    public function __construct($request, $outputProcessor, $autoloader)
     {
         $this->setRequest($request)
-             ->setOutputProcessor($outputProcessor);
+             ->setOutputProcessor($outputProcessor)
+             ->setAutoloader($autoloader);
     }
 
     /**

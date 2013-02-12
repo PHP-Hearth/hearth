@@ -17,6 +17,7 @@ use Hearth\Core;
 use Hearth\Test\Mock\Request as DumbRequest;
 use Hearth\Exception\BuildException;
 use Hearth\Test\Mock\Output as DumbOutput;
+use Hearth\Test\Mock\Autoload as DumbAutoload;
 
 use PHPUnit_Framework_TestCase as Test;
 
@@ -40,7 +41,11 @@ class CoreTest extends Test
      */
     public function testConstruct()
     {
-        $core = new Core(new DumbRequest(null, null));
+        $core = new Core(
+            new DumbRequest(null, null),
+            new DumbOutput(),
+            new DumbAutoload()
+        );
     }
 
     /**
@@ -50,8 +55,11 @@ class CoreTest extends Test
      */
     public function testFailBuild()
     {
-        $core = new Core(new DumbRequest(null, null));
-        $core->setOutputProcessor(new DumbOutput());
+        $core = new Core(
+            new DumbRequest(null, null),
+            new DumbOutput(),
+            new DumbAutoload()
+        );
         $core->failBuild(new BuildException('Test Failure'));
         
         $this->assertTrue($core->getFailed());

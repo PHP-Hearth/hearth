@@ -33,9 +33,7 @@ $outputProcessor = new \Hearth\Console\Output();
 
 $request = \Hearth\Request::constructFromArgs($argv);
 
-$core = new \Hearth\Core($request, $outputProcessor);
-
-$core->setAutoloader($autoloader);
+$core = new \Hearth\Core($request, $outputProcessor, $autoloader);
 
 try {
     $core->main()->close();
