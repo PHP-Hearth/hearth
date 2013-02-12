@@ -1,7 +1,7 @@
 Hearth
 ======
 
-[![Build Status](https://secure.travis-ci.org/PHP-Hearth/hearth.png?branch=dev)](http://travis-ci.org/PHP-Hearth/hearth)
+[![Build Status](http://jenkins.maxvandervelde.com/view/Hearth/job/Hearth%20Bugfix%20Release%20Updater/badge/icon)](http://jenkins.maxvandervelde.com/view/Hearth/job/Hearth%20Bugfix%20Release%20Updater/)
 
 Hearth is a PHP command line build tool for PHP projects. It is built with
 defined tasks and targets expressed in PHP code. You can easily extend it to

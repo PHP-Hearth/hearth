@@ -15,10 +15,12 @@
 
 namespace Hearth;
 
-use Hearth\Ansi\Format;
-use Hearth\Target\Resolver;
-use Hearth\Exception\FileNotFound as FileNotFoundException;
+use Hearth\Autoload;
+use Hearth\Autoload\Path;
 use Hearth\Console\Output\OutputInterface as OutputInterface;
+use Hearth\Exception\BuildException;
+use Hearth\Exception\FileNotFound as FileNotFoundException;
+use Hearth\Target\Resolver;
 
 /**
  * Core
@@ -43,19 +45,19 @@ class Core
     /**
      * @var boolean Wheather or not the build is marked as failed
      */
-    protected $_failed = false;
+    private $failed = false;
 
     /**
      * @var array The arguments given for the build script
      */
-    protected $_arguments = array();
+    private $arguments = array();
 
     /**
      * Target Arguments
      *
      * @var array
      */
-    protected $_targetArguments = array();
+    private $targetArguments = array();
 
     /**
      * Index of targets available to Hearth
@@ -63,7 +65,7 @@ class Core
      * @var array
      * @access protected
      */
-    protected $_targetIndex = array();
+    private $targetIndex = array();
 
     /**
      * Output Processor cached
@@ -71,7 +73,41 @@ class Core
      * @var mixed
      * @access protected
      */
-    protected $_outputProcessor = null;
+    private $outputProcessor = null;
+
+    /**
+     * Autoloader for system files
+     *
+     * @var \Hearth\Autoload
+     */
+    private $autoloader;
+
+    /**
+     * Get Autoloader
+     *
+     * Gets the autoloader to use when loading hearth core files
+     *
+     * @return \Hearth\Autoload
+     */
+    public function getAutoloader()
+    {
+        return $this->autoloader;
+    }
+
+    /**
+     * Set Autoloader
+     *
+     * Sets the autoloader to use when loading hearth core files
+     *
+     * @param \Hearth\Autoload $autoloader The autoloader to use
+     * @return \Hearth\Core
+     */
+    public function setAutoloader(Autoload $autoloader)
+    {
+        $this->autoloader = $autoloader;
+
+        return $this;
+    }
 
     /**
      * Set the arguments to be passed to the Target
@@ -81,7 +117,7 @@ class Core
      */
     public function setTargetArguments(array $args)
     {
-        $this->_targetArguments = $args;
+        $this->targetArguments = $args;
         return $this;
     }
 
@@ -92,7 +128,7 @@ class Core
      */
     public function getTargetArguments()
     {
-        return $this->_targetArguments;
+        return $this->targetArguments;
     }
 
     /**
@@ -105,7 +141,7 @@ class Core
      */
     public function setOutputProcessor(OutputInterface $outputProcessor)
     {
-        $this->_outputProcessor = $outputProcessor;
+        $this->outputProcessor = $outputProcessor;
 
         return $this;
     }
@@ -118,13 +154,13 @@ class Core
      */
     public function getOutputProcessor()
     {
-        if (!isset($this->_outputProcessor)) {
+        if (!isset($this->outputProcessor)) {
             throw new \UnexpectedValueException(
                 'No output processor has been configured.'
             );
         }
 
-        return $this->_outputProcessor;
+        return $this->outputProcessor;
     }
 
     /**
@@ -183,13 +219,28 @@ class Core
         $targetName = $resolver->getTargetClassName();
         $target = new $targetName();
 
+        $targetPath = new Path(
+            $resolver->getLastFullLoadBasePath(),
+            $resolver->getTargetsNamespace()
+        );
+        $this->getAutoloader()->AddLoadPath(
+            $targetPath
+        );
+
         $out->printLn('')
             ->fgColor($out::COLOR_GREEN)
             ->printLn('[Target] ' . $targetName)
             ->reset();
 
         // Run target
+        ob_start();
         $target->main();
+        $targetOutput = ob_get_clean();
+
+        $this->sectionedOutput(
+            trim($targetOutput, "\n"),
+            $resolver->getTargetName()
+        );
 
         $out->printLn('')
             ->set_bgcolor($out::COLOR_GREEN)
@@ -204,6 +255,47 @@ class Core
             ->printLn('');
 
         return $this;
+    }
+
+    /**
+     * sectionedOutput
+     *
+     * Displays a string line by line divided into sections marked by their
+     * section title and optionally indented.
+     *
+     * @access public
+     * @param string $output
+     * @param string $sectionTitle
+     * @param int $lineIndent
+     * @return void
+     */
+    public function sectionedOutput($output, $sectionTitle, $lineIndent = 1)
+    {
+        if (empty($output)) {
+            return;
+        }
+
+        if (!is_int($lineIndent)) {
+            throw new \InvalidArgumentException(
+                'Unexpected ' . gettype($lineIndent) . '. Expected an int'
+            );
+        }
+        
+        $outputLines = preg_split("/\n/", $output);
+
+        foreach ($outputLines as $line) {
+            $builtOutputString = '';
+            
+            for ($x = 0; $x < $lineIndent; $x++) {
+                $builtOutputString .= '  ';
+            }
+
+            $builtOutputString .= '[' . $sectionTitle . '] ';
+            $builtOutputString .= $line;
+            $this->getOutputProcessor()->printLn($builtOutputString);
+        }
+
+        return;
     }
 
     /**
@@ -224,7 +316,7 @@ class Core
             );
         }
 
-        $this->_args = $args;
+        $this->args = $args;
 
         return $this;
     }
@@ -239,13 +331,13 @@ class Core
      */
     public function getArguments($index = null)
     {
-        if (!is_null($index) && !array_key_exists($index, $this->_args)) {
+        if (!is_null($index) && !array_key_exists($index, $this->args)) {
             throw new \InvalidArgumentException(
                 "Invalid argument specified, argument does not exist."
             );
         }
 
-        return (is_null($index)) ? $this->_args : $this->_args[$index];
+        return (is_null($index)) ? $this->args : $this->args[$index];
     }
 
     /**
@@ -258,7 +350,7 @@ class Core
      */
     public function getFailed()
     {
-        return $this->_failed;
+        return $this->failed;
     }
 
     /**
@@ -279,7 +371,7 @@ class Core
             );
         }
 
-        $this->_failed = $status;
+        $this->failed = $status;
 
         return $this;
     }
@@ -293,7 +385,7 @@ class Core
      * @param \Hearth\Exception\BuildException $e
      * @return \Hearth\Core
      */
-    public function failBuild(\Hearth\Exception\BuildException $e)
+    public function failBuild(BuildException $e)
     {
         $this->displayException($e, 'Build Failed!');
 

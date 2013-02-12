@@ -42,6 +42,7 @@ class ResolverTest extends Test
 
         $this->resolver = new Resolver();
         $this->resolver->setOutputProcessor($mockOutput)
+                       ->setResolveBasePath(getcwd())
                        ->setInitialYmlPath($testYaml);
     }
 

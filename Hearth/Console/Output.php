@@ -15,6 +15,8 @@
 
 namespace Hearth\Console;
 
+use \Hearth\Console\Output\OutputInterface;
+
 /**
  * Output
  *
@@ -30,7 +32,7 @@ namespace Hearth\Console;
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
 class Output extends \Qi_Console_Terminal
-    implements \Hearth\Console\Output\OutputInterface
+    implements OutputInterface
 {
     /**
      * printLn

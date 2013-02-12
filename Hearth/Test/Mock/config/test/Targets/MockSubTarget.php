@@ -1,40 +1,28 @@
 <?php
 /**
- * DemoTarget.php
+ * MockSubTarget.php
  *
  * @category Hearth
- * @package Targets
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
- * @version 0.0.0
+ * @version 1.0.0
  * @license http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
  *          Attribution-NonCommercial-ShareAlike 3.0 Unported
  *          Some Rights Reserved
  */
 
-namespace Hearth\Build\Target;
-
-use Hearth\Target;
+namespace TestNamespace\Targets;
 
 /**
- * DemoTarget
+ * MockSubTarget
  *
- * @category Hearth
- * @package Targets
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
+ * @category Hearth
  */
-class DemoTarget Extends Target
+class MockSubTarget extends \Hearth\Target
 {
-    /**
-     * Primary target procedure
-     *
-     * @access public
-     * @return void
-     */
     public function main()
     {
-        echo "Hello World\n";
-
+        echo 'Rejoyce! And be glad!';
         return;
     }
-
 }

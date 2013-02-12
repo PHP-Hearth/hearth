@@ -31,32 +31,37 @@ class Resolver
     /**
      * @var string The initial yaml file to start from
      */
-    protected $_initialYmlPath;
+    private $initialYmlPath;
 
     /**
      * @var string The base path of the base configuration file to resolve
      */
-    protected $_resolveBasePath;
+    private $resolveBasePath;
 
     /**
      * @var string The resolved target name
      */
-    protected $_targetName;
+    private $targetName;
 
     /**
      * @var string the path of the resolved child's targets
      */
-    protected $_targetsPath;
+    private $targetsPath;
 
     /**
      * @var string The base namespace of the resolved child's targets
      */
-    protected $_targetsNamespace;
+    private $targetsNamespace;
 
     /**
      * @var string The absolute path of the resolved target
      */
-    protected $_lastChildTargetsPath;
+    private $lastChildTargetsPath;
+
+    /**
+     * @var string The last basepath to which all targets are autoloaded from
+     */
+    private $lastFullLoadBasePath;
 
     /**
      * _loadConfigFile
@@ -67,8 +72,8 @@ class Resolver
      * @param string $file Full path and filename to the YML file
      * @return array
      */
-    protected function _loadConfigFile($file) {
-        $file = $this->_resolveBasePath . DIRECTORY_SEPARATOR . $file;
+    protected function loadConfigFile($file) {
+        $file = $this->resolveBasePath . DIRECTORY_SEPARATOR . $file;
         if (!file_exists($file)) {
             throw new \Hearth\Exception\FileNotFound(
                 "Unable to find configuration file: {$file}"
@@ -90,14 +95,14 @@ class Resolver
      * @param string $initial The path of the initial config to load from
      * @return string
      */
-    protected function _resolveConfigPath($queue, $initial)
+    protected function resolveConfigPath($queue, $initial)
     {
-        $this->_resolveBasePath = dirname($initial);
+        $this->resolveBasePath = dirname($initial);
         $path = basename($initial);
 
-        for ($yml = $this->_loadConfigFile($path);
+        for ($yml = $this->loadConfigFile($path);
             count($queue) > 0;
-            $yml = $this->_loadConfigFile($path)) {
+            $yml = $this->loadConfigFile($path)) {
 
             $child = array_shift($queue);
 
@@ -122,17 +127,27 @@ class Resolver
         $targetName = array_pop($targetArgs);
         $childQueue = $targetArgs;
 
-        $lastChildYmlPath = $this->_resolveConfigPath($childQueue, $this->getInitialYmlPath());
-        $lastChildYaml = $this->_loadConfigFile($lastChildYmlPath);
+        $lastChildYmlPath = $this->resolveConfigPath(
+            $childQueue, $this->getInitialYmlPath()
+        );
+        $this->setLastFullLoadBasePath(
+            realpath(
+                dirname($this->getInitialYmlPath()) . DIRECTORY_SEPARATOR
+                . dirname($lastChildYmlPath)
+            )
+        );
+        
+        $lastChildYaml = $this->loadConfigFile($lastChildYmlPath);
 
-        $namespace = $lastChildYaml['namespace'];
+        $namespace = isset($lastChildYaml['namespace']) ? $lastChildYaml['namespace'] : null;
+        $qualifiedNamespace = !empty($namespace) && $namespace[0] !== '\\' ? '\\' . $namespace : $namespace;
 
         $this->setTargetName($targetName);
         $this->setTargetsPath(
             realpath(dirname($lastChildYmlPath)) . DIRECTORY_SEPARATOR 
             . $lastChildYaml['targets']
         );
-        $this->setTargetsNamespace($namespace);
+        $this->setTargetsNamespace($qualifiedNamespace);
         $this->setLastChildTargetsPath(
             DIRECTORY_SEPARATOR . $lastChildYaml['targets']
         );
@@ -154,9 +169,9 @@ class Resolver
         $this->getOutputProcessor()->printLn("Available Targets");
         $this->getOutputProcessor()->printLn("-----------------");
 
-        $index = $this->_indexConfig($this->getInitialYmlPath());
+        $index = $this->indexConfig($this->getInitialYmlPath());
 
-        $this->_displayIndex($index);
+        $this->displayIndex($index);
 
         return $this;
     }
@@ -172,7 +187,7 @@ class Resolver
      * @param string $namespace The base namespace, used for recursing
      * @return \Hearth\Target\Resolver
      */
-    protected function _displayIndex(array $index, $namespace = '')
+    protected function displayIndex(array $index, $namespace = '')
     {
         if (isset($index['targets'])) {
             $path = $index['targets'] . DIRECTORY_SEPARATOR . '*.php';
@@ -187,7 +202,7 @@ class Resolver
 
         if (isset($index['children']) && is_array($index['children'])) {
             foreach ($index['children'] as $child => $value) {
-                $this->_displayIndex($value, $namespace . $child . '/');
+                $this->displayIndex($value, $namespace . $child . '/');
             }
         }
 
@@ -203,13 +218,13 @@ class Resolver
      * @param string $config the configuration file to initally load from
      * @return array
      */
-    protected function _indexConfig($config)
+    protected function indexConfig($config)
     {
         // Get the absolute path of the config file so we can set the path to 
         // the targets correctly
         $path = realpath(dirname($config));
 
-        $config = $this->_loadConfigFile($config);
+        $config = $this->loadConfigFile($config);
 
         if ($config['targets'] != '') {
             $targets['targets'] = $path . DIRECTORY_SEPARATOR . $config['targets'];
@@ -217,12 +232,12 @@ class Resolver
             $targets['targets'] = '';
         }
 
-        if (!is_array($config['children'])) {
+        if (!isset($config['children']) || !is_array($config['children'])) {
             return $targets;
         }
 
         foreach ($config['children'] as $childName => $childConfigPath) {
-            $targets['children'][$childName] = $this->_indexConfig($childConfigPath);
+            $targets['children'][$childName] = $this->indexConfig($childConfigPath);
         }
 
         return $targets;
@@ -246,7 +261,7 @@ class Resolver
             );
         }
 
-        $this->_initialYmlPath = $path;
+        $this->initialYmlPath = $path;
 
         return $this;
     }
@@ -261,7 +276,7 @@ class Resolver
      */
     public function getInitialYmlPath()
     {
-        return $this->_initialYmlPath;
+        return $this->initialYmlPath;
     }
 
     /**
@@ -282,7 +297,7 @@ class Resolver
             );
         }
 
-        $this->_targetName = $name;
+        $this->targetName = $name;
 
         return $this;
     }
@@ -297,7 +312,7 @@ class Resolver
      */
     public function getTargetName()
     {
-        return $this->_targetName;
+        return $this->targetName;
     }
 
     /**
@@ -318,7 +333,7 @@ class Resolver
             );
         }
         
-        $this->_targetsPath = $path;
+        $this->targetsPath = $path;
 
         return $this;
     }
@@ -333,7 +348,7 @@ class Resolver
      */
     public function getTargetsPath()
     {
-        return rtrim($this->_targetsPath, DIRECTORY_SEPARATOR);
+        return rtrim($this->targetsPath, DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -346,7 +361,7 @@ class Resolver
      */
     public function getTargetsNamespace()
     {
-        return $this->_targetsNamespace;
+        return $this->targetsNamespace;
     }
 
     /**
@@ -361,13 +376,13 @@ class Resolver
      */
     public function setTargetsNamespace($namespace)
     {
-        if (!is_string($namespace)) {
+        if (!is_string($namespace) && $namespace !== null) {
             throw new \InvalidArgumentException(
                 'Unexpected ' . gettype($namespace) . '. Expected a string'
             );
         }
 
-        $this->_targetsNamespace = $namespace;
+        $this->targetsNamespace = $namespace;
 
         return $this;
     }
@@ -405,7 +420,7 @@ class Resolver
             );
         }
 
-        $this->_lastChildTargetsPath = $path;
+        $this->lastChildTargetsPath = $path;
 
         return $this;
     }
@@ -421,7 +436,7 @@ class Resolver
      */
     public function getLastChildTargetsPath()
     {
-        return $this->_lastChildTargetsPath;
+        return $this->lastChildTargetsPath;
     }
 
     /**
@@ -434,7 +449,7 @@ class Resolver
      */
     public function getTargetClassName()
     {
-        $className = '\\' . $this->getTargetsNamespace();
+        $className = $this->getTargetsNamespace();
         $className .= preg_replace('#/#', '\\', trim($this->getLastChildTargetsPath(), '.'));
         $className .= '\\' . $this->getTargetName();
 
@@ -483,7 +498,7 @@ class Resolver
      */
     public function getResolveBasePath()
     {
-        return $this->_resolveBasePath;
+        return $this->resolveBasePath;
     }
 
     /**
@@ -494,8 +509,44 @@ class Resolver
      */
     public function setResolveBasePath($resolveBasePath)
     {
-        $this->_resolveBasePath = $resolveBasePath;
+        $this->resolveBasePath = $resolveBasePath;
 
         return $this;
+    }
+
+    /**
+     * Set Last Full Load Base Path
+     *
+     * Sets the final resolved basepath to which all targets are subsequently
+     * loaded from.
+     *
+     * @param string $path The path to set
+     * @return \Hearth\Target\Resolver
+     * @throws \InvalidArgumentException
+     */
+    public function setLastFullLoadBasePath($path)
+    {
+        if (!is_string($path)) {
+            throw new \InvalidArgumentException(
+                'Unexpected ' . gettype($path) . '. Expected a string'
+            );
+        }
+
+        $this->lastFullLoadBasePath = $path;
+
+        return $this;
+    }
+
+    /**
+     * Get Last Full Load Base Path
+     *
+     * Gets the final resolved basepath to which all targets are subsequently
+     * loaded from.
+     *
+     * @return string
+     */
+    public function getLastFullLoadBasePath()
+    {
+        return $this->lastFullLoadBasePath;
     }
 }
