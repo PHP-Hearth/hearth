@@ -26,26 +26,26 @@ class Output implements \Hearth\Console\Output\OutputInterface
 {
     public function bgColor($color)
     {
-        return;
+        return $this;
     }
 
     public function fgColor($color)
     {
-        return;
+        return $this;
     }
 
     public function intense()
     {
-        return;
+        return $this;
     }
 
     public function printLn($string)
     {
-        return;
+        return $this;
     }
 
     public function reset()
     {
-        return;
+        return $this;
     }
 }
