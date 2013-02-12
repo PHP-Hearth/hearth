@@ -31,13 +31,11 @@ require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'vendor'
 
 $outputProcessor = new \Hearth\Console\Output();
 
-// Strip off the program name
-$program = array_shift($argv);
+$request = \Hearth\Request::constructFromArgs($argv);
 
-$core = new \Hearth\Core();
+$core = new \Hearth\Core($request);
 
 $core->setOutputProcessor($outputProcessor)
-     ->setArguments($argv)
      ->setAutoloader($autoloader);
 
 try {
