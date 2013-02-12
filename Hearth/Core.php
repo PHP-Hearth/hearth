@@ -20,6 +20,7 @@ use Hearth\Autoload\Path;
 use Hearth\Console\Output\OutputInterface as OutputInterface;
 use Hearth\Exception\BuildException;
 use Hearth\Exception\FileNotFound as FileNotFoundException;
+use Hearth\Request;
 use Hearth\Target\Resolver;
 
 /**
@@ -48,9 +49,9 @@ class Core
     private $failed = false;
 
     /**
-     * @var array The arguments given for the build script
+     * @var \Hearth\Request The Request that was made to the core
      */
-    private $arguments = array();
+    private $request;
 
     /**
      * Target Arguments
@@ -81,6 +82,16 @@ class Core
      * @var \Hearth\Autoload
      */
     private $autoloader;
+
+    /**
+     * Constructor
+     *
+     * @param \Hearth\Request $request
+     */
+    public function __construct($request)
+    {
+        $this->setRequest($request);
+    }
 
     /**
      * Get Autoloader
@@ -171,9 +182,8 @@ class Core
      */
     public function main()
     {
-        $args          = $this->getArguments();
-        $argumentCount = count($args);
-        $initialYml    = '.hearth.yml';
+        $request       = $this->getRequest();
+        $initialYml    = $request->getConfig() !== null ? $request->getConfig() : '.hearth.yml';
         $time          = microtime();
         $out           = $this->getOutputProcessor();
 
@@ -192,26 +202,21 @@ class Core
                  ->setInitialYmlPath($initialYml);
 
         // If no arguments, show the listing (index)
-        if ($argumentCount === 0) {
+        if ($request->getTarget() === null) {
             $resolver->index();
             return $this;
         }
 
-        // Set Target arguments
-        // We know that they are present or else
-        // we would not have gotten this far
-        $this->setTargetArguments(
-            explode('/', $this->getArguments(0))
-        );
-
         // Resolve & lookup target
         $resolver->lookup(
-            $this->getTargetArguments()
+            explode('/', $request->getTarget())
         );
         $targetFile = $resolver->getTargetFile();
 
         if (!file_exists($targetFile)) {
-            throw new FileNotFoundException("Target '" . $this->getArguments(0) . "' not found.\nLooking in '" . $targetFile . "'");
+            throw new FileNotFoundException(
+                'Target \'' . $request->getTarget() . '\' not found.\nLooking in \'' . $targetFile . '\''
+            );
         }
 
         require $targetFile;
@@ -299,45 +304,31 @@ class Core
     }
 
     /**
-     * setArgssetArguments
+     * Get Request
      *
-     * Sets the arguments given from the application call
-     *
-     * @access public
-     * @param array $args
-     * @return \Hearth\Core
-     * @throws \InvalidArgumentException
+     * @return \Hearth\Request
      */
-    public function setArguments($args)
+    public function getRequest()
     {
-        if (!is_array($args)) {
-            throw new \InvalidArgumentException(
-                'Unexpected ' . gettype($args) . '. Expected an array'
-            );
-        }
-
-        $this->args = $args;
-
-        return $this;
+        return $this->request;
     }
 
     /**
-     * getArguments
+     * Set Request
      *
-     * Gets the arguments given from the application call
-     *
-     * @access public
-     * @return array
+     * @param \Hearth\Request $request
      */
-    public function getArguments($index = null)
+    public function setRequest($request)
     {
-        if (!is_null($index) && !array_key_exists($index, $this->args)) {
+        if (!$request instanceof Request && !$request === null) {
             throw new \InvalidArgumentException(
-                "Invalid argument specified, argument does not exist."
+                'Unexpected Object type for request. Expected an instanceof \Hearth\Request'
             );
         }
 
-        return (is_null($index)) ? $this->args : $this->args[$index];
+        $this->request = $request;
+
+        return $this;
     }
 
     /**
