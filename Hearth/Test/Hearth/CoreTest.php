@@ -26,5 +26,10 @@ use PHPUnit_Framework_TestCase as Test;
  */
 class CoreTest extends Test
 {
-    
+    public function testNothing()
+    {
+        $this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+    }
 }
