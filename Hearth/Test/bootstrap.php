@@ -3,6 +3,7 @@
  * bootstrap.php
  *
  * Testing framework bootstrap
+ * Loads autoloaders and exactly nothing else
  * 
  * @category Hearth
  * @package Tests
@@ -13,27 +14,13 @@
  *          Some Rights Reserved
  */
 require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
-    . '..' . DIRECTORY_SEPARATOR . 'Hearth' . DIRECTORY_SEPARATOR
-    . 'Autoload' . DIRECTORY_SEPARATOR . 'AutoloadInterface.php';
-require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR 
-    . '..' . DIRECTORY_SEPARATOR . 'Hearth' . DIRECTORY_SEPARATOR
-    . 'Autoload.php';
+    . '..' . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
-$autoloader = new \Hearth\Autoload();
-
-require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR
-    . '..' . DIRECTORY_SEPARATOR . 'Hearth' . DIRECTORY_SEPARATOR . 'Autoload' 
-    . DIRECTORY_SEPARATOR . 'Path.php';
-
-$corePath = new \Hearth\Autoload\Path(
+// Load our autoloader
+\Hearth\Autoload::registerDefaultAutoloader(
     dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..'
 );
-
-$autoloader->addLoadPath($corePath);
-
-spl_autoload_register(array($autoloader, 'load'));
-
-// Autoload Composer libraries
-require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR 
-    . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR
-    . 'autoload.php';
+// Load Composer autoloader
+\Hearth\Autoload::loadAndRegisterComposer(
+    dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..'
+);

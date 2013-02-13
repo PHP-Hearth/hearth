@@ -14,27 +14,13 @@
  *          Some Rights Reserved
  */
 
-require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Hearth'
-    . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR
-    . 'AutoloadInterface.php';
-require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Hearth'
-    . DIRECTORY_SEPARATOR . 'Autoload.php';
+require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
-$autoloader = new \Hearth\Autoload();
-
-require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Hearth' . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'Path.php';
-$corePath = new \Hearth\Autoload\Path(dirname(__FILE__));
-$autoloader->addLoadPath($corePath);
-
-spl_autoload_register(array($autoloader, 'load'));
-
-// Autoload Composer libraries
-require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'vendor'
-    . DIRECTORY_SEPARATOR . 'autoload.php';
-
-$outputProcessor = new \Hearth\Console\Output();
+$autoloader = \Hearth\Autoload::registerDefaultAutoloader(dirname(__FILE__));
+\Hearth\Autoload::loadAndRegisterComposer(dirname(__FILE__));
 
 $request = \Hearth\Request::constructFromArgs($argv);
+$outputProcessor = new \Hearth\Console\Output();
 
 $core = new \Hearth\Core($outputProcessor, $autoloader);
 $core->handleRequest($request);
