@@ -72,7 +72,8 @@ class Resolver
      * @param string $file Full path and filename to the YML file
      * @return array
      */
-    protected function loadConfigFile($file) {
+    protected function loadConfigFile($file)
+    {
         $file = $this->resolveBasePath . DIRECTORY_SEPARATOR . $file;
         if (!file_exists($file)) {
             throw new \Hearth\Exception\FileNotFound(
@@ -100,14 +101,11 @@ class Resolver
         $this->resolveBasePath = dirname($initial);
         $path = basename($initial);
 
-        for ($yml = $this->loadConfigFile($path);
-            count($queue) > 0;
-            $yml = $this->loadConfigFile($path)) {
+        for ($yml = $this->loadConfigFile($path); count($queue) > 0; $yml = $this->loadConfigFile($path)) {
 
             $child = array_shift($queue);
 
             $path = $yml['children'][$child];
-
         }
 
         return $path;
@@ -128,7 +126,8 @@ class Resolver
         $childQueue = $targetArgs;
 
         $lastChildYmlPath = $this->resolveConfigPath(
-            $childQueue, $this->getInitialYmlPath()
+            $childQueue,
+            $this->getInitialYmlPath()
         );
         $this->setLastFullLoadBasePath(
             realpath(
@@ -136,7 +135,7 @@ class Resolver
                 . dirname($lastChildYmlPath)
             )
         );
-        
+
         $lastChildYaml = $this->loadConfigFile($lastChildYmlPath);
 
         $namespace = isset($lastChildYaml['namespace']) ? $lastChildYaml['namespace'] : null;
@@ -144,7 +143,7 @@ class Resolver
 
         $this->setTargetName($targetName);
         $this->setTargetsPath(
-            realpath(dirname($lastChildYmlPath)) . DIRECTORY_SEPARATOR 
+            realpath(dirname($lastChildYmlPath)) . DIRECTORY_SEPARATOR
             . $lastChildYaml['targets']
         );
         $this->setTargetsNamespace($qualifiedNamespace);
@@ -220,7 +219,7 @@ class Resolver
      */
     protected function indexConfig($config)
     {
-        // Get the absolute path of the config file so we can set the path to 
+        // Get the absolute path of the config file so we can set the path to
         // the targets correctly
         $path = realpath(dirname($config));
 
@@ -332,7 +331,7 @@ class Resolver
                 'Unexpected ' . gettype($path) . '. Expected a string'
             );
         }
-        
+
         $this->targetsPath = $path;
 
         return $this;
@@ -397,7 +396,7 @@ class Resolver
      */
     public function getTargetFile()
     {
-        return $this->getTargetsPath() . DIRECTORY_SEPARATOR 
+        return $this->getTargetsPath() . DIRECTORY_SEPARATOR
             . $this->getTargetName() . '.php';
     }
 
