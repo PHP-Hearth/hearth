@@ -255,9 +255,9 @@ class Core
 
         $timeDiff = microtime() - $time;
         $out->printLn(
-                'Build execution time: ' . $timeDiff . 's'
-            )
-            ->printLn('');
+            'Build execution time: ' . $timeDiff . 's'
+        )
+        ->printLn('');
 
         return $this;
     }
@@ -285,12 +285,12 @@ class Core
                 'Unexpected ' . gettype($lineIndent) . '. Expected an int'
             );
         }
-        
+
         $outputLines = preg_split("/\n/", $output);
 
         foreach ($outputLines as $line) {
             $builtOutputString = '';
-            
+
             for ($x = 0; $x < $lineIndent; $x++) {
                 $builtOutputString .= '  ';
             }

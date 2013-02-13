@@ -31,29 +31,29 @@ use Hearth\Exception as HearthException;
  */
 class FileNotFound extends HearthException
 {
-	/**
-	 * Error string to use if a filename was given.
-	 */
-	const DEFAULT_ERROR_STRING = 'Unable to locate file: ';
+    /**
+     * Error string to use if a filename was given.
+     */
+    const DEFAULT_ERROR_STRING = 'Unable to locate file: ';
 
-	/**
-	 * Error string to use if no filename was given.
-	 */
-	const DEFAULT_NULL_ERROR_STRING = 'Unable to locate file.';
+    /**
+     * Error string to use if no filename was given.
+     */
+    const DEFAULT_NULL_ERROR_STRING = 'Unable to locate file.';
 
-	/**
-	 * Initialization
-	 *
-	 * @param string $file Filename
-	 */
-	public function __construct($file = null)
-	{
-		if (!is_null($file)) {
-			$message = self::DEFAULT_ERROR_STRING . $file;
-		} else {
-			$message = self::DEFAULT_NULL_ERROR_STRING;
-		}
+    /**
+     * Initialization
+     *
+     * @param string $file Filename
+     */
+    public function __construct($file = null)
+    {
+        if (!is_null($file)) {
+            $message = self::DEFAULT_ERROR_STRING . $file;
+        } else {
+            $message = self::DEFAULT_NULL_ERROR_STRING;
+        }
 
-		return parent::__construct($message);
-	}
+        return parent::__construct($message);
+    }
 }
