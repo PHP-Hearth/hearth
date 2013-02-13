@@ -6,7 +6,7 @@
  *
  * @category Hearth
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
- * @version 0.0.0
+ * @version 1.1.0
  * @license http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
  *          Attribution-NonCommercial-ShareAlike 3.0 Unported
  *          Some Rights Reserved
@@ -15,6 +15,7 @@
 namespace Hearth;
 
 use Hearth\Autoload\Path;
+use Hearth\Autoload\AutoloadInterface;
 
 /**
  * Autoload
@@ -24,7 +25,7 @@ use Hearth\Autoload\Path;
  * @category Hearth
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
-class Autoload
+class Autoload implements AutoloadInterface
 {
     /**
      * @var array
@@ -85,7 +86,7 @@ class Autoload
      *
      * Adds a path to the stack for autoloading
      *
-     * @param string $path The path to add to the autoloader
+     * @param \Hearth\Autoload\Path $path The path to add to the autoloader
      * @return \Hearth\Autoload
      * @throws \InvalidArgumentException
      */

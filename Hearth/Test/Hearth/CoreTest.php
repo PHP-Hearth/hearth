@@ -5,7 +5,7 @@
  * @category Hearth
  * @package Test
  * @author Maxwell Vandervelde <Maxwell.Vandervelde@nerdery.com>
- * @version 0.0.0
+ * @version 1.1.0
  * @license http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
  *          Attribution-NonCommercial-ShareAlike 3.0 Unported
  *          Some Rights Reserved
@@ -14,6 +14,9 @@
 namespace Hearth\Test\Hearth;
 
 use Hearth\Core;
+use Hearth\Exception\BuildException;
+use Hearth\Test\Mock\Output as DumbOutput;
+use Hearth\Test\Mock\Autoload as DumbAutoload;
 
 use PHPUnit_Framework_TestCase as Test;
 
@@ -26,10 +29,32 @@ use PHPUnit_Framework_TestCase as Test;
  */
 class CoreTest extends Test
 {
-    public function testNothing()
+    /**
+     * Test Constructor
+     * 
+     * Simply test that the controller can be constructed successfully
+     */
+    public function testConstruct()
     {
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
+        new Core(
+            new DumbOutput(),
+            new DumbAutoload()
         );
+    }
+
+    /**
+     * Test Fail Build
+     *
+     * Test that a build can be failed properly
+     */
+    public function testFailBuild()
+    {
+        $core = new Core(
+            new DumbOutput(),
+            new DumbAutoload()
+        );
+        $core->failBuild(new BuildException('Test Failure'));
+        
+        $this->assertTrue($core->getFailed());
     }
 }
