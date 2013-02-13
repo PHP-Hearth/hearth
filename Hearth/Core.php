@@ -15,7 +15,7 @@
 
 namespace Hearth;
 
-use Hearth\Autoload;
+use Hearth\Autoload\AutoloadInterface;
 use Hearth\Autoload\Path;
 use Hearth\Console\Output\OutputInterface as OutputInterface;
 use Hearth\Exception\BuildException;
@@ -47,11 +47,6 @@ class Core
      * @var boolean Wheather or not the build is marked as failed
      */
     private $failed = false;
-
-    /**
-     * @var \Hearth\Request The Request that was made to the core
-     */
-    private $request;
 
     /**
      * Target Arguments
@@ -86,11 +81,30 @@ class Core
     /**
      * Constructor
      *
-     * @param \Hearth\Request $request
+     * @param \Hearth\Request $request The request object
+     * @param \Hearth\Console\Output\OutputInterface The Output console to use
      */
-    public function __construct($request)
+    public function __construct($outputProcessor, $autoloader)
     {
-        $this->setRequest($request);
+        $this->setOutputProcessor($outputProcessor)
+             ->setAutoloader($autoloader);
+    }
+
+    /**
+     * Handle Request
+     *
+     * @param \Hearth\Request $request The request to run
+     * @return void
+     */
+    public function handleRequest(Request $request)
+    {
+        try {
+            $this->runRequest($request)->close();
+        } catch(BuildException $e) {
+            $this->failBuild($e)->close();
+        } catch(Exception $e) {
+            $this->displayException($e)->close();
+        }
     }
 
     /**
@@ -110,10 +124,10 @@ class Core
      *
      * Sets the autoloader to use when loading hearth core files
      *
-     * @param \Hearth\Autoload $autoloader The autoloader to use
+     * @param \Hearth\Autoload\AutoloadInterface $autoloader The autoloader to use
      * @return \Hearth\Core
      */
-    public function setAutoloader(Autoload $autoloader)
+    public function setAutoloader(AutoloadInterface $autoloader)
     {
         $this->autoloader = $autoloader;
 
@@ -175,14 +189,13 @@ class Core
     }
 
     /**
-     * Primary procedure
+     * Run request
      *
      * @access public
      * @return void
      */
-    public function main()
+    public function runRequest(Request $request)
     {
-        $request       = $this->getRequest();
         $initialYml    = $request->getConfig() !== null ? $request->getConfig() : '.hearth.yml';
         $time          = microtime();
         $out           = $this->getOutputProcessor();
@@ -301,34 +314,6 @@ class Core
         }
 
         return;
-    }
-
-    /**
-     * Get Request
-     *
-     * @return \Hearth\Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Set Request
-     *
-     * @param \Hearth\Request $request
-     */
-    public function setRequest($request)
-    {
-        if (!$request instanceof Request && !$request === null) {
-            throw new \InvalidArgumentException(
-                'Unexpected Object type for request. Expected an instanceof \Hearth\Request'
-            );
-        }
-
-        $this->request = $request;
-
-        return $this;
     }
 
     /**
