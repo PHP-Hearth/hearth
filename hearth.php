@@ -33,12 +33,5 @@ $outputProcessor = new \Hearth\Console\Output();
 
 $request = \Hearth\Request::constructFromArgs($argv);
 
-$core = new \Hearth\Core($request, $outputProcessor, $autoloader);
-
-try {
-    $core->main()->close();
-} catch(\Hearth\Exception\BuildException $e) {
-    $core->failBuild($e)->close();
-} catch(\Exception $e) {
-    $core->displayException($e)->close();
-}
+$core = new \Hearth\Core($outputProcessor, $autoloader);
+$core->handleRequest($request);

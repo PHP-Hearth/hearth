@@ -49,11 +49,6 @@ class Core
     private $failed = false;
 
     /**
-     * @var \Hearth\Request The Request that was made to the core
-     */
-    private $request;
-
-    /**
      * Target Arguments
      *
      * @var array
@@ -89,11 +84,27 @@ class Core
      * @param \Hearth\Request $request The request object
      * @param \Hearth\Console\Output\OutputInterface The Output console to use
      */
-    public function __construct($request, $outputProcessor, $autoloader)
+    public function __construct($outputProcessor, $autoloader)
     {
-        $this->setRequest($request)
-             ->setOutputProcessor($outputProcessor)
+        $this->setOutputProcessor($outputProcessor)
              ->setAutoloader($autoloader);
+    }
+
+    /**
+     * Handle Request
+     *
+     * @param \Hearth\Request $request The request to run
+     * @return void
+     */
+    public function handleRequest(Request $request)
+    {
+        try {
+            $this->runRequest($request)->close();
+        } catch(BuildException $e) {
+            $this->failBuild($e)->close();
+        } catch(Exception $e) {
+            $this->displayException($e)->close();
+        }
     }
 
     /**
@@ -178,14 +189,13 @@ class Core
     }
 
     /**
-     * Primary procedure
+     * Run request
      *
      * @access public
      * @return void
      */
-    public function main()
+    public function runRequest(Request $request)
     {
-        $request       = $this->getRequest();
         $initialYml    = $request->getConfig() !== null ? $request->getConfig() : '.hearth.yml';
         $time          = microtime();
         $out           = $this->getOutputProcessor();
@@ -304,34 +314,6 @@ class Core
         }
 
         return;
-    }
-
-    /**
-     * Get Request
-     *
-     * @return \Hearth\Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Set Request
-     *
-     * @param \Hearth\Request $request
-     */
-    public function setRequest($request)
-    {
-        if (!$request instanceof Request && !$request === null) {
-            throw new \InvalidArgumentException(
-                'Unexpected Object type for request. Expected an instanceof \Hearth\Request'
-            );
-        }
-
-        $this->request = $request;
-
-        return $this;
     }
 
     /**

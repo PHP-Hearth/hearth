@@ -42,7 +42,6 @@ class CoreTest extends Test
     public function testConstruct()
     {
         $core = new Core(
-            new DumbRequest(null, null),
             new DumbOutput(),
             new DumbAutoload()
         );
@@ -56,7 +55,6 @@ class CoreTest extends Test
     public function testFailBuild()
     {
         $core = new Core(
-            new DumbRequest(null, null),
             new DumbOutput(),
             new DumbAutoload()
         );
