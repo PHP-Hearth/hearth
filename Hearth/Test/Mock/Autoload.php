@@ -14,6 +14,8 @@
 
 namespace Hearth\Test\Mock;
 
+use Hearth\Autoload\AutoloadInterface;
+
 /**
  * Autoload
  *
@@ -22,7 +24,7 @@ namespace Hearth\Test\Mock;
  * @subpackage Mock
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  */
-class Autoload extends \Hearth\Autoload
+class Autoload implements AutoloadInterface
 {
     /**
      * @inheritDoc

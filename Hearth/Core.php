@@ -15,7 +15,7 @@
 
 namespace Hearth;
 
-use Hearth\Autoload;
+use Hearth\Autoload\AutoloadInterface;
 use Hearth\Autoload\Path;
 use Hearth\Console\Output\OutputInterface as OutputInterface;
 use Hearth\Exception\BuildException;
@@ -124,10 +124,10 @@ class Core
      *
      * Sets the autoloader to use when loading hearth core files
      *
-     * @param \Hearth\Autoload $autoloader The autoloader to use
+     * @param \Hearth\Autoload\AutoloadInterface $autoloader The autoloader to use
      * @return \Hearth\Core
      */
-    public function setAutoloader(Autoload $autoloader)
+    public function setAutoloader(AutoloadInterface $autoloader)
     {
         $this->autoloader = $autoloader;
 

@@ -8,14 +8,17 @@
  * @category Hearth
  * @author Maxwell Vandervelde <Max@MaxVandervelde.com>
  * @author Douglas Linsmeyer <douglas.linsmeyer@nerdery.com>
- * @version 0.0.0
+ * @version 1.1.0
  * @license http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
  *          Attribution-NonCommercial-ShareAlike 3.0 Unported
  *          Some Rights Reserved
  */
 
 require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Hearth'
-    . DIRECTORY_SEPARATOR. 'Autoload.php';
+    . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR
+    . 'AutoloadInterface.php';
+require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Hearth'
+    . DIRECTORY_SEPARATOR . 'Autoload.php';
 
 $autoloader = new \Hearth\Autoload();
 
