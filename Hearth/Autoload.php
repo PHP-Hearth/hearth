@@ -14,8 +14,8 @@
 
 namespace Hearth;
 
-use Hearth\Autoload\Path;
 use Hearth\Autoload\AutoloadInterface;
+use Hearth\Autoload\Path;
 
 /**
  * Autoload
@@ -95,5 +95,55 @@ class Autoload implements AutoloadInterface
         array_unshift($this->loadPathStack, $path);
 
         return $this;
+    }
+
+    /**
+     * Register Default Autoloader
+     *
+     * Registers the default configuration and one path for the hearth
+     * autoloader based on that single basepath.
+     *
+     * WARNING - This method is a bootstrap helper!
+     * it has a dependency on \Hearth\Autoload\Path
+     *
+     * @param string $path The basepath to load from
+     * @return \Hearth\Autoload The autoloader object
+     */
+    public static function registerDefaultAutoloader($path = null)
+    {
+        if ($path === null) {
+            $path = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..';
+        }
+        
+        $autoloader = new \Hearth\Autoload();
+
+        $corePath = new \Hearth\Autoload\Path($path);
+        $autoloader->addLoadPath($corePath);
+
+        spl_autoload_register(array($autoloader, 'load'));
+
+        return $autoloader;
+    }
+
+    /**
+     * Load and Register Composer
+     *
+     * This function requires the composer autoload file which registers it
+     * immediately into the spl_autoload_register
+     *
+     * WARNING - This method is a bootsrap helper!
+     * It will include files into your application using require()
+     *
+     * @param string $path The Basepath to look for the vendors dir inside of
+     * @return mixed The composer autoload object
+     */
+    public static function loadAndRegisterComposer($path = null)
+    {
+        if ($path === null) {
+            $path = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..';
+        }
+
+        return require $path . DIRECTORY_SEPARATOR . 'vendor'
+            . DIRECTORY_SEPARATOR . 'autoload.php';
     }
 }
