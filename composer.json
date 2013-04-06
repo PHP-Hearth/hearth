@@ -1,4 +1,29 @@
 {
+    "name": "PHP-Hearth/hearth",
+    "type": "library",
+    "description": "Hearth is a PHP command line build tool for PHP projects. It is built with defined tasks and targets expressed in PHP code. You can easily extend it to create your own targets and tasks.",
+    "keywords": [
+        "builder",
+        "utility",
+        "tasks",
+        "automation"
+    ],
+    "homepage": "https://github.com/PHP-Hearth/hearth",
+    "licence": "Attribution-NonCommercial-ShareAlike 3.0 Unported",
+    "authors": [
+        {
+            "name": "Maxwell Vandervelde",
+            "email": "Max@MaxVandervelde.com",
+            "homepage": "MaxVandervelde.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Douglas Linsmeyer",
+            "email": "douglinsmeyer@gmail.com",
+            "homepage": "douglinsmeyer.com",
+            "role": "developer"
+        }
+    ],
     "repositories": [
         {
             "type": "vcs",
